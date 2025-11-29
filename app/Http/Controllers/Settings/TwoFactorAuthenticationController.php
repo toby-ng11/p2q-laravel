@@ -15,6 +15,7 @@ class TwoFactorAuthenticationController extends Controller implements HasMiddlew
     /**
      * Get the middleware that should be assigned to the controller.
      */
+    #[\Override]
     public static function middleware(): array
     {
         return Features::optionEnabled(Features::twoFactorAuthentication(), 'confirmPassword')

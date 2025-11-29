@@ -16,6 +16,7 @@ class CreateNewUser implements CreatesNewUsers
      *
      * @param  array<string, string>  $input
      */
+    #[\Override]
     public function create(array $input): User
     {
         Validator::make($input, [
