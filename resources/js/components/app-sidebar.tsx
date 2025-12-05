@@ -10,19 +10,54 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import {
+    admin,
+    architect,
+    home,
+    opportunity,
+    project,
+    quote,
+} from '@/routes/dashboard';
+import { SharedData, type NavItem } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
+import { BookOpen, Folder, Home, LayoutGrid, Shield } from 'lucide-react';
 import AppLogo from './app-logo';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-];
+function getMainNavItems(isAdmin: boolean): NavItem[] {
+    const mainNavItems: NavItem[] = [
+        {
+            title: 'Home',
+            href: home(),
+            icon: Home,
+        },
+        {
+            title: 'Opportunities',
+            href: opportunity(),
+            icon: LayoutGrid,
+        },
+        {
+            title: 'Projects',
+            href: project(),
+            icon: LayoutGrid,
+        },
+        {
+            title: 'Quotes',
+            href: quote(),
+            icon: LayoutGrid,
+        },
+        {
+            title: 'Architects',
+            href: architect(),
+            icon: LayoutGrid,
+        },
+    ];
+
+    if (isAdmin) {
+        mainNavItems.unshift({ title: 'Admin', href: admin(), icon: Shield });
+    }
+
+    return [...mainNavItems];
+}
 
 const footerNavItems: NavItem[] = [
     {
@@ -38,13 +73,17 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
+    const { user } = usePage<SharedData>().props.auth;
+    const isAdmin = user.is_admin;
+    const mainNavItems = getMainNavItems(isAdmin);
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
+                            <Link href="/" prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
