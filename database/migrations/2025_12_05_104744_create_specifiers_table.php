@@ -1,0 +1,31 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('specifiers', function (Blueprint $table) {
+            $table->id();
+            $table->string('first_name', 100);
+            $table->string('last_name', 100)->nullable();
+            $table->string('job_title', 50)->nullable();
+            $table->foreignId('architect_id')->constrained();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('specifiers');
+    }
+};
