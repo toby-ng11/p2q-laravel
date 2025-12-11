@@ -31,9 +31,14 @@ class Architect extends Model
         return $this->hasMany(Specifier::class);
     }
 
-    public function type(): BelongsTo
+    public function architectType(): BelongsTo
     {
         return $this->belongsTo(ArchitectType::class);
+    }
+
+    public function architectRep(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'architect_rep_id', 'id');
     }
 
     //public function projects(): HasMany

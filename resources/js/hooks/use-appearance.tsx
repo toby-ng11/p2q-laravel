@@ -1,6 +1,50 @@
-import { useCallback, useEffect, useState } from 'react';
+import {
+    createContext,
+    type ReactNode,
+    useCallback,
+    useContext,
+    useEffect,
+    useState,
+} from 'react';
 
 export type Appearance = 'light' | 'dark' | 'system';
+
+interface ThemeContextType {
+    appearance: Appearance;
+    updateAppearance: (mode: Appearance) => void;
+}
+
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+export function ThemeProvider({ children }: { children: ReactNode }) {
+    const [appearance, setAppearance] = useState<Appearance>(() => {
+        const saved = localStorage.getItem('appearance') as Appearance | null;
+        return saved || 'system';
+    });
+
+    const updateAppearance = useCallback((mode: Appearance) => {
+        setAppearance(mode);
+        localStorage.setItem('appearance', mode);
+        setCookie('appearance', mode);
+        applyTheme(mode);
+    }, []);
+
+    useEffect(() => {
+        const mq = mediaQuery();
+        if (mq) {
+            mq.addEventListener('change', handleSystemThemeChange);
+        }
+
+        // Clean up event listener on unmount
+        return () => mq?.removeEventListener('change', handleSystemThemeChange);
+    }, []);
+
+    return (
+        <ThemeContext.Provider value={{ appearance, updateAppearance }}>
+            {children}
+        </ThemeContext.Provider>
+    );
+}
 
 const prefersDark = () => {
     if (typeof window === 'undefined') {
@@ -81,4 +125,13 @@ export function useAppearance() {
     }, [updateAppearance]);
 
     return { appearance, updateAppearance } as const;
+}
+
+export function useTheme() {
+    const context = useContext(ThemeContext);
+
+    if (context === undefined) {
+        throw new Error('useTheme must be used within a ThemeProvider');
+    }
+    return context;
 }
