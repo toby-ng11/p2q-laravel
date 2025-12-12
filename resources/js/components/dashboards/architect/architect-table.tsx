@@ -6,7 +6,7 @@ import { useTanStackQuery } from '@/hooks/use-tanstack-query';
 import architects from '@/routes/architects';
 import userPreference from '@/routes/user-preference';
 import { Link } from '@inertiajs/react';
-import { ColumnDef, FilterFn } from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 import { useMemo } from 'react';
 
 interface ArchitectTable {
@@ -21,17 +21,6 @@ interface ArchitectTable {
     class_id: string;
     created_at: string;
 }
-
-const multiValueFilter: FilterFn<ArchitectTable> = (
-    row,
-    columnId,
-    filterValue,
-) => {
-    if (!Array.isArray(filterValue)) return true;
-    const rowValue = row.getValue(columnId);
-    return filterValue.includes(rowValue);
-};
-
 export default function ArchitectTable() {
     const ENDPOINT = '/architects';
     const prefKey = 'architect-dashboard-own-architect-table-column-visibility';
@@ -118,6 +107,7 @@ export default function ArchitectTable() {
                     <DataTableColumnHeader column={column} title="Type" />
                 ),
                 meta: 'Type',
+                filterFn: 'arrIncludesSome',
             },
             {
                 id: 'architectRepName',
@@ -129,6 +119,7 @@ export default function ArchitectTable() {
                     />
                 ),
                 meta: 'Architect Rep.',
+                filterFn: 'arrIncludesSome',
             },
             {
                 id: 'created_at',
@@ -170,6 +161,8 @@ export default function ArchitectTable() {
                     columns={columns}
                     data={architectData}
                     sortingColumns={[{ id: 'id', desc: true }]}
+                    hasPagination
+                    hasSelect
                     hasSearch={{
                         searchColumn: 'architect_name',
                         searchPlaceholder: 'Search architects...',
@@ -178,7 +171,15 @@ export default function ArchitectTable() {
                         retriveEndpoint: getUrl,
                         saveEndpoint: postUrl,
                     }}
-                    hasSelect
+                    hasFacetedFilter={{
+                        facetedFilters: [
+                            { columnId: 'architectType', title: 'Type' },
+                            {
+                                columnId: 'architectRepName',
+                                title: 'Architect Rep.',
+                            },
+                        ],
+                    }}
                     isFetching={isFetching}
                 />
             </div>

@@ -11,7 +11,7 @@ export default [
     js.configs.recommended,
     reactHooks.configs.flat.recommended,
     ...typescript.configs.recommended,
-    ...pluginQuery.configs.flat.recommended,
+    ...pluginQuery.configs['flat/recommended'],
     {
         ...react.configs.flat.recommended,
         ...react.configs.flat['jsx-runtime'], // Required for React 17+

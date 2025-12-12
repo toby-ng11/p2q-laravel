@@ -8,7 +8,7 @@ export function useTanStackQuery<TData>(
     options?: Omit<UseQueryOptions<TData[], Error>, 'queryKey' | 'queryFn'>,
 ) {
     return useQuery<TData[], Error>({
-        queryKey: queryKey,
+        queryKey: [url, ...queryKey],
         queryFn: async () => {
             const res = await axios.get(url);
             return res.data;
