@@ -21,9 +21,19 @@ interface ArchitectTable {
     class_id: string;
     created_at: string;
 }
-export default function ArchitectTable() {
-    const ENDPOINT = '/architects';
-    const prefKey = 'architect-dashboard-own-architect-table-column-visibility';
+
+interface ArchitectTableProps {
+    endpoint: string;
+    tableInfo: {
+        title: string;
+        description: string;
+    };
+}
+export default function ArchitectTable({
+    endpoint,
+    tableInfo,
+}: ArchitectTableProps) {
+    const prefKey = 'architect-dashboard-architect-table-column-visibility';
 
     const getUrl = userPreference.show.url(prefKey);
     const postUrl = userPreference.update.url(prefKey);
@@ -34,7 +44,7 @@ export default function ArchitectTable() {
         isFetching,
         refetch,
         dataUpdatedAt,
-    } = useTanStackQuery<ArchitectTable>(ENDPOINT, qKey);
+    } = useTanStackQuery<ArchitectTable>(endpoint, qKey);
 
     const columns = useMemo<ColumnDef<ArchitectTable>[]>(
         () => [
@@ -150,10 +160,10 @@ export default function ArchitectTable() {
             <div className="flex flex-1 flex-col gap-4 p-2">
                 <div className="flex flex-col gap-1">
                     <h2 className="text-2xl font-semibold tracking-tight">
-                        All Architects
+                        {tableInfo.title}
                     </h2>
                     <p className="text-muted-foreground">
-                        Here's the list of all architects.
+                        {tableInfo.description}
                     </p>
                 </div>
 

@@ -15,10 +15,24 @@ class ArchitectController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        $architects = Architect::select()
-            ->with(['architectType:id,architect_type_desc', 'architectRep:id,name'])
-            ->get();
-        return response()->json($architects->toArray());
+        $userId = $request->input('user_id', null);
+
+        if ($userId) {
+            $architects = Architect::select()
+                ->where('architect_rep_id', $userId)
+                ->with(['architectType:id,architect_type_desc', 'architectRep:id,name'])
+                ->get();
+            return response()->json($architects->toArray());
+        }
+
+        if ($user && $user->is_admin) {
+            $architects = Architect::select()
+                ->with(['architectType:id,architect_type_desc', 'architectRep:id,name'])
+                ->get();
+            return response()->json($architects->toArray());
+        }
+
+        return response()->json(['User ID is required.']);
     }
 
     /**

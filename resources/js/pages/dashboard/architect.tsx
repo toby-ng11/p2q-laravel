@@ -1,9 +1,10 @@
 import ArchitectTable from '@/components/dashboards/architect/architect-table';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
 import { architect } from '@/routes/dashboard';
-import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { SharedData, type BreadcrumbItem } from '@/types';
+import { Head, usePage } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -13,6 +14,10 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function ArchitectDashboard() {
+    const { user } = usePage<SharedData>().props.auth;
+    const userId = user.id;
+    const isAdmin = user.is_admin;
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Architect Dashboard" />
@@ -31,7 +36,48 @@ export default function ArchitectDashboard() {
                         <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
                     </div>
                 </div>
-                <ArchitectTable />
+
+                {isAdmin ? (
+                    <Tabs defaultValue="own-architect">
+                        <TabsList>
+                            <TabsTrigger value="own-architect">
+                                Own Architect
+                            </TabsTrigger>
+                            <TabsTrigger value="all-architect">
+                                All Architect
+                            </TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value="own-architect">
+                            <ArchitectTable
+                                endpoint={'/architects?user_id=' + userId}
+                                tableInfo={{
+                                    title: 'Own Architects',
+                                    description:
+                                        'Here is the list of your architects.',
+                                }}
+                            />
+                        </TabsContent>
+                        <TabsContent value="all-architect">
+                            <ArchitectTable
+                                endpoint="/architects"
+                                tableInfo={{
+                                    title: 'All Architects',
+                                    description:
+                                        'Here is the list of all architects.',
+                                }}
+                            />
+                        </TabsContent>
+                    </Tabs>
+                ) : (
+                    <ArchitectTable
+                        endpoint={'/architects?user_id=' + userId}
+                        tableInfo={{
+                            title: 'Own Architects',
+                            description: 'Here is the list of your architects.',
+                        }}
+                    />
+                )}
             </div>
         </AppLayout>
     );

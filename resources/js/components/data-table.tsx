@@ -246,6 +246,7 @@ export function DataTable<TData, TValue>({
         }
     }, [columnVisibility, isReady, hasVisibilityControl.saveEndpoint]);
 
+    // waiting for tanstack to fix this :)
     // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({
         data,
