@@ -3,7 +3,10 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Enums\UserRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -11,6 +14,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 /**
  * @property int $id
  * @property bool $is_admin
+ * @property string $name
+ * @property UserRole $user_role_id
  */
 class User extends Authenticatable
 {
@@ -53,6 +58,17 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
+            'user_role_id' => UserRole::class,
         ];
+    }
+
+    public function isAdministrator(): bool
+    {
+        return $this->user_role_id === UserRole::ADMIN;
+    }
+
+    public function isManagerOrAbove(): bool
+    {
+        return $this->user_role_id->atLeast(UserRole::MANAGER);
     }
 }

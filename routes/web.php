@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\ArchitectController;
+use App\Http\Controllers\ArchitectRepController;
+use App\Http\Controllers\ArchitectTypeController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserPreferenceController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -19,6 +22,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resources([
         'architects' => ArchitectController::class,
     ]);
+
+    Route::apiResources([
+        'architect-type' => ArchitectTypeController::class,
+    ]);
+
+    Route::get('architect-reps', [ArchitectRepController::class, 'index'])->name('architect-reps.index');
 });
 
 require __DIR__ . '/settings.php';

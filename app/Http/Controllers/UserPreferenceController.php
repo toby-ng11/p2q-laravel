@@ -31,11 +31,14 @@ class UserPreferenceController extends Controller
     public function update(Request $request, string $key): JsonResponse
     {
         $user = $request->user();
-        UserPreference::updateOrCreate(
-            ['user_id' => $user->id, 'key' => $key],
-            ['value' => $request->input('value')]
-        );
+        if ($user) {
+            UserPreference::updateOrCreate(
+                ['user_id' => $user->id, 'key' => $key],
+                ['value' => $request->input('value')]
+            );
+            return response()->json(['success' => true]);
+        }
 
-        return response()->json(['success' => true]);
+        return response()->json(['success' => false, 'error' => 'User is not logged in!']);
     }
 }

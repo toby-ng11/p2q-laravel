@@ -49,6 +49,7 @@ function getMainNavItems(isAdmin: boolean): NavItem[] {
             title: 'Architects',
             href: architect(),
             icon: LayoutGrid,
+            openDialog: 'createArchitect',
         },
     ];
 
@@ -73,8 +74,8 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
-    const { user } = usePage<SharedData>().props.auth;
-    const isAdmin = user.is_admin;
+    const { userProperties } = usePage<SharedData>().props.auth;
+    const isAdmin = userProperties.isAdministrator;
     const mainNavItems = getMainNavItems(isAdmin);
 
     return (

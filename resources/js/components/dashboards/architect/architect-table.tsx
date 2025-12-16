@@ -104,7 +104,7 @@ export default function ArchitectTable({
                     <DataTableColumnHeader column={column} title="Architect" />
                 ),
                 cell: ({ row }) => (
-                    <div className="max-w-[300px] truncate font-medium">
+                    <div className="max-w-75 truncate font-medium">
                         {row.getValue('architect_name')}
                     </div>
                 ),

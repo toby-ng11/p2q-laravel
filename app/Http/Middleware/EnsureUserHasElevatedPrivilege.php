@@ -7,7 +7,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureUserIsAdmin
+class EnsureUserHasElevatedPrivilege
 {
     /**
      * Handle an incoming request.
@@ -18,9 +18,10 @@ class EnsureUserIsAdmin
     {
         $user = $request->user();
 
-        if (! $user || ! $user->isAdministrator()) {
+        if (! $user || ! $user->isManagerOrAbove()) {
             return redirect()->route('dashboard.home');
         }
+
         return $next($request);
     }
 }

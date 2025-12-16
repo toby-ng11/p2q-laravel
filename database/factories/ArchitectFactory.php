@@ -22,6 +22,8 @@ class ArchitectFactory extends Factory
     #[\Override]
     public function definition(): array
     {
+        ArchitectType::factory()->create();
+
         return [
             'architect_name' => fake()->company(),
             'architect_rep_id' => User::inRandomOrder()->first()->id,

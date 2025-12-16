@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
+/**
+ * @property int $architect_rep_id
+ */
 class Architect extends Model
 {
     /** @use HasFactory<\Database\Factories\ArchitectFactory> */

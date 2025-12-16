@@ -3,6 +3,10 @@ import { LucideIcon } from 'lucide-react';
 
 export interface Auth {
     user: User;
+    userProperties: {
+        isManagerOrAbove: boolean;
+        isAdministrator: boolean;
+    };
 }
 
 export interface BreadcrumbItem {
@@ -20,6 +24,7 @@ export interface NavItem {
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon | null;
     isActive?: boolean;
+    openDialog?: string;
 }
 
 export interface SharedData {
@@ -40,5 +45,6 @@ export interface User {
     created_at: string;
     updated_at: string;
     is_admin: boolean;
+    user_role_id: string | number;
     [key: string]: unknown; // This allows for additional properties...
 }

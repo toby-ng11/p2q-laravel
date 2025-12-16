@@ -103,7 +103,7 @@ export function DataTable<TData, TValue>({
                     table.setPageSize(Number(value));
                 }}
             >
-                <SelectTrigger className="h-8 w-[70px]">
+                <SelectTrigger className="h-8 w-17.5">
                     <SelectValue
                         placeholder={table.getState().pagination.pageSize}
                     />
@@ -120,7 +120,7 @@ export function DataTable<TData, TValue>({
     );
 
     const PaginationPageIndex = () => (
-        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+        <div className="flex w-25 items-center justify-center text-sm font-medium">
             Page {table.getState().pagination.pageIndex + 1} of{' '}
             {table.getPageCount()}
         </div>
@@ -281,7 +281,7 @@ export function DataTable<TData, TValue>({
                             onChange={(event) =>
                                 searchCol.setFilterValue(event.target.value)
                             }
-                            className="h-8 w-[150px] lg:w-[250px]"
+                            className="h-8 w-37.5 lg:w-62.5"
                         />
                     )}
                     {hasFacetedFilter.facetedFilters !== undefined &&
@@ -321,7 +321,7 @@ export function DataTable<TData, TValue>({
                                             </Button>
                                         </PopoverTrigger>
                                         <PopoverContent
-                                            className="w-fit max-w-[400px] p-4"
+                                            className="w-fit max-w-100 p-4"
                                             align="start"
                                         >
                                             <div className="flex flex-col gap-2">
@@ -442,6 +442,6 @@ export function DataTable<TData, TValue>({
             </div>
         </div>
     ) : (
-        <DataTableSkeleton rows={15} cols={5} />
+        <DataTableSkeleton rows={10} cols={5} />
     );
 }

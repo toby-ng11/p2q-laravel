@@ -1,16 +1,20 @@
+import { useGlobalDialogs } from '@/components/dialog-context';
 import {
     SidebarGroup,
     SidebarGroupLabel,
     SidebarMenu,
+    SidebarMenuAction,
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { resolveUrl } from '@/lib/utils';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
+import { Plus } from 'lucide-react';
 
 export function NavMain({ items = [] }: { items: NavItem[] }) {
     const page = usePage();
+    const { open } = useGlobalDialogs();
     return (
         <SidebarGroup className="px-2 py-0">
             <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -29,6 +33,15 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                 <span>{item.title}</span>
                             </Link>
                         </SidebarMenuButton>
+                        {item.openDialog && (
+                            <SidebarMenuAction
+                                showOnHover
+                                onClick={() => open('architectDialog')}
+                                className="cursor-pointer hover:bg-foreground hover:text-secondary"
+                            >
+                                <Plus />
+                            </SidebarMenuAction>
+                        )}
                     </SidebarMenuItem>
                 ))}
             </SidebarMenu>

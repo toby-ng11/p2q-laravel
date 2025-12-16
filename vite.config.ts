@@ -2,6 +2,7 @@ import { wayfinder } from '@laravel/vite-plugin-wayfinder';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import laravel from 'laravel-vite-plugin';
+//import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
@@ -20,6 +21,7 @@ export default defineConfig({
         wayfinder({
             formVariants: true,
         }),
+        //visualizer({ open: true }),
     ],
     esbuild: {
         jsx: 'automatic',
