@@ -14,9 +14,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function ArchitectDashboard() {
-    const { user } = usePage<SharedData>().props.auth;
+    const { user, userProperties } = usePage<SharedData>().props.auth;
     const userId = user.id;
-    const isAdmin = user.is_admin;
+    const isAdmin = userProperties.isAdministrator;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

@@ -26,7 +26,6 @@ class ArchitectPolicyTest extends TestCase
         return User::factory()->create(['user_role_id' => $role]);
     }
 
-
     public function test_archrep_can_view_own_architect(): void
     {
         $rep = $this->user(UserRole::ARCHREP);
@@ -36,7 +35,6 @@ class ArchitectPolicyTest extends TestCase
             $this->policy->view($rep, $architect)
         );
     }
-
 
     public function test_archrep_cannot_view_others_architect(): void
     {
@@ -50,7 +48,6 @@ class ArchitectPolicyTest extends TestCase
         );
     }
 
-
     public function test_sales_can_view_any_architect(): void
     {
         $sales = $this->user(UserRole::SALES);
@@ -60,7 +57,6 @@ class ArchitectPolicyTest extends TestCase
             $this->policy->view($sales, $architect)
         );
     }
-
 
     public function test_sales_cannot_update_architect(): void
     {
@@ -72,7 +68,6 @@ class ArchitectPolicyTest extends TestCase
         );
     }
 
-
     public function test_manager_can_update_any_architect(): void
     {
         $manager = $this->user(UserRole::MANAGER);
@@ -82,7 +77,6 @@ class ArchitectPolicyTest extends TestCase
             $this->policy->update($manager, $architect)
         );
     }
-
 
     public function test_admin_can_do_anything(): void
     {

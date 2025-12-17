@@ -25,7 +25,7 @@ class ArchitectController extends Controller
             return response()->json($architects->toArray());
         }
 
-        if ($user && $user->is_admin) {
+        if ($user && $user->isAdministrator()) {
             $architects = Architect::select()
                 ->with(['architectType:id,architect_type_desc', 'architectRep:id,name'])
                 ->get();

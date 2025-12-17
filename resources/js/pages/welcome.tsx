@@ -64,8 +64,8 @@ function FeatureCard({
 }
 
 export default function WelcomePage() {
-    const { user } = usePage<SharedData>().props.auth;
-    const isAdmin = user.is_admin;
+    const { user, userProperties } = usePage<SharedData>().props.auth;
+    const isAdmin = userProperties.isAdministrator;
 
     return (
         <>

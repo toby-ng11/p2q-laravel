@@ -17,7 +17,7 @@ class ArchitectSeeder extends Seeder
     public function run(): void
     {
         Architect::factory()
-            ->count(10)
+            ->count(50)
             ->has(Address::factory()->count(2)
                 ->state(function (array $attributes, Architect $architect) {
                     return [

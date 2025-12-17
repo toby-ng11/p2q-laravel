@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\UserRole;
 use App\Models\Address;
 use App\Models\Architect;
 use App\Models\ArchitectType;
@@ -22,11 +23,11 @@ class ArchitectFactory extends Factory
     #[\Override]
     public function definition(): array
     {
-        ArchitectType::factory()->create();
-
         return [
-            'architect_name' => fake()->company(),
-            'architect_rep_id' => User::inRandomOrder()->first()->id,
+            'architect_name' => fake()->unique()->company(),
+            'architect_rep_id' =>
+            User::where('user_role_id', UserRole::ARCHREP)->inRandomOrder()->first()->id ??
+            User::factory()->state(['user_role_id' => UserRole::ARCHREP]),
             'architect_type_id' => ArchitectType::inRandomOrder()->first()->id,
             'class_id' => fake()->randomElement(['A', 'B', 'C', 'D', 'E']),
         ];
