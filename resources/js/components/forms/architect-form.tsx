@@ -1,3 +1,5 @@
+import FormLayout from '@/components/form-layout';
+import InputError from '@/components/input-error';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -12,19 +14,29 @@ import { store } from '@/routes/architects';
 import { SharedData } from '@/types';
 import { Form, usePage } from '@inertiajs/react';
 import { Loader2 } from 'lucide-react';
+import { useDialog } from '../dialog-context';
 
 interface ArchitectType {
-    id: string | number;
+    id: string;
     architect_type_desc: string;
 }
 
 interface ArchitectRep {
-    id: string | number;
+    id: string;
     name: string;
 }
 
-export default function ArchitectForm({ formId }: { formId: string }) {
+interface ArchitectFormProps {
+    formId: string;
+    onProcessingChange?: (processing: boolean) => void;
+}
+
+export default function ArchitectForm({
+    formId,
+    onProcessingChange,
+}: ArchitectFormProps) {
     const { user } = usePage<SharedData>().props.auth;
+    const { closeDialog } = useDialog('architectDialog');
     const isManagerOrAbove =
         usePage<SharedData>().props.auth.userProperties.isManagerOrAbove;
     const architectTypes = useTanStackQuery<ArchitectType>('/architect-type', [
@@ -33,22 +45,34 @@ export default function ArchitectForm({ formId }: { formId: string }) {
     const architectReps = useTanStackQuery<ArchitectRep>('/architect-reps', [
         'architect-reps',
     ]);
+    const architectClasses = ['A', 'B', 'C', 'D', 'E'];
 
     return (
-        <Form id={formId} {...store.form()}>
-            <div className="flex max-h-125 flex-col gap-6 overflow-y-auto p-4">
-                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3 xl:gap-6">
+        <Form
+            {...store.form()}
+            id={formId}
+            onStart={() => onProcessingChange?.(true)}
+            onFinish={() => onProcessingChange?.(false)}
+            onSuccess={closeDialog}
+            resetOnSuccess
+        >
+            {({ errors, validate }) => (
+                <FormLayout>
                     <div className="grid gap-2">
                         <Label htmlFor="architect_name">Name</Label>
                         <Input
                             id="architect_name"
                             type="text"
                             name="architect_name"
+                            onBlur={() => validate('architect_name')}
                         ></Input>
+                        <InputError message={errors.architect_name} />
+                    </div>
 
-                        <Label htmlFor="architect_type">Type</Label>
-                        <Select name="architect_type">
-                            <SelectTrigger id="architect_type">
+                    <div className="grid gap-2">
+                        <Label htmlFor="architect_type_id">Type</Label>
+                        <Select name="architect_type_id">
+                            <SelectTrigger id="architect_type_id">
                                 <SelectValue placeholder="Select an architect type..." />
                             </SelectTrigger>
                             <SelectContent>
@@ -59,40 +83,46 @@ export default function ArchitectForm({ formId }: { formId: string }) {
                                 )}
                                 {architectTypes.data?.map((type) => (
                                     <SelectItem
-                                        key={type.id}
-                                        value={type.architect_type_desc}
+                                        key={type.architect_type_desc}
+                                        value={type.id}
                                     >
                                         {type.architect_type_desc}
                                     </SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
+                        <InputError message={errors.architect_type_id} />
+                    </div>
 
+                    <div className="grid gap-2">
                         <Label htmlFor="architect_rep_id">Architect Rep.</Label>
                         {isManagerOrAbove ? (
-                            <Select name="architect_rep_id">
-                                <SelectTrigger id="architect_rep_id">
-                                    <SelectValue placeholder="Select an architect representative..." />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {architectReps.isLoading && (
-                                        <SelectItem
-                                            key="loading"
-                                            value="loading"
-                                        >
-                                            <Loader2 className="animate-spin" />
-                                        </SelectItem>
-                                    )}
-                                    {architectReps.data?.map((type) => (
-                                        <SelectItem
-                                            key={type.id}
-                                            value={type.name}
-                                        >
-                                            {type.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <>
+                                <Select name="architect_rep_id">
+                                    <SelectTrigger id="architect_rep_id">
+                                        <SelectValue placeholder="Select an architect representative..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {architectReps.isLoading && (
+                                            <SelectItem
+                                                key="loading"
+                                                value="loading"
+                                            >
+                                                <Loader2 className="animate-spin" />
+                                            </SelectItem>
+                                        )}
+                                        {architectReps.data?.map((type) => (
+                                            <SelectItem
+                                                key={type.id}
+                                                value={type.id}
+                                            >
+                                                {type.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <InputError message={errors.architect_rep_id} />
+                            </>
                         ) : (
                             <>
                                 <Input
@@ -101,12 +131,35 @@ export default function ArchitectForm({ formId }: { formId: string }) {
                                     value={user.name}
                                     disabled
                                 />
-                                <Input hidden name="architect_rep_id" />
+                                <Input
+                                    hidden
+                                    name="architect_rep_id"
+                                    value={user.id}
+                                />
                             </>
                         )}
                     </div>
-                </div>
-            </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="class_id">Class</Label>
+                        <Select name="class_id">
+                            <SelectTrigger id="class_id">
+                                <SelectValue placeholder="Select an architect class..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {architectClasses.map((architectClass) => (
+                                    <SelectItem
+                                        key={architectClass}
+                                        value={architectClass}
+                                    >
+                                        {architectClass}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </FormLayout>
+            )}
         </Form>
     );
 }

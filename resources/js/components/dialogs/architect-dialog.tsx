@@ -10,9 +10,12 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { Loader2 } from 'lucide-react';
+import { useState } from 'react';
 
 export default function ArchitectDialog() {
     const { open, closeDialog } = useDialog('architectDialog');
+    const [isProcessing, setIsProcessing] = useState(false);
     const formId = 'create-architect-form';
 
     return (
@@ -20,16 +23,17 @@ export default function ArchitectDialog() {
             open={open}
             onOpenChange={(open) => (open ? null : closeDialog())}
         >
-            <DialogContent className="md:min-w-2xl lg:min-w-5xl">
+            <DialogContent className="md:min-w-2xl">
                 <DialogHeader>
                     <DialogTitle>Create Architect</DialogTitle>
                     <DialogDescription>
                         Enter information for the new architect, then click
-                        Create.
+                        Create. You will be able to fill in addresses and
+                        specifiers in the next screen.
                     </DialogDescription>
                 </DialogHeader>
 
-                <ArchitectForm formId={formId} />
+                <ArchitectForm formId={formId} onProcessingChange={setIsProcessing} />
 
                 <DialogFooter>
                     <DialogClose asChild>
@@ -37,8 +41,11 @@ export default function ArchitectDialog() {
                             Cancel
                         </Button>
                     </DialogClose>
-                    <Button type="submit" form={formId}>
+                    <Button type="submit" form={formId} disabled={isProcessing}>
                         Save
+                        {isProcessing && (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        )}
                     </Button>
                 </DialogFooter>
             </DialogContent>

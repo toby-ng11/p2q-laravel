@@ -37,7 +37,7 @@ export default function ArchitectTable({
 
     const getUrl = userPreference.show.url(prefKey);
     const postUrl = userPreference.update.url(prefKey);
-    const qKey = ['architect-dasboard', 'architect-table'];
+    const qKey = ['architect-dashboard', 'architect-table'];
 
     const {
         data: architectData = [],

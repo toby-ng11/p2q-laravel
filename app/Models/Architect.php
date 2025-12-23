@@ -24,6 +24,10 @@ class Architect extends Model
         'class_id',
     ];
 
+    protected $casts = [
+        'id' => 'string',
+    ];
+
     public function addresses(): MorphMany
     {
         return $this->morphMany(Address::class, 'addressable');

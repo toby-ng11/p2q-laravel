@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Architect;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreArchitectRequest extends FormRequest
@@ -11,7 +12,8 @@ class StoreArchitectRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        $user = $this->user();
+        return $user ? $user->can('create', Architect::class) : false;
     }
 
     /**
@@ -22,7 +24,10 @@ class StoreArchitectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'architect_name' => 'required|max:255|unique:architects',
+            'architect_rep_id' => 'required',
+            'architect_type_id' => 'required',
+            'class_id' => 'nullable|string|max:1',
         ];
     }
 }

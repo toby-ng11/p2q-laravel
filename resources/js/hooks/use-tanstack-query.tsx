@@ -1,4 +1,8 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import {
+    keepPreviousData,
+    useQuery,
+    UseQueryOptions,
+} from '@tanstack/react-query';
 import axios from 'axios';
 
 export function useTanStackQuery<TData>(
@@ -15,7 +19,9 @@ export function useTanStackQuery<TData>(
         },
         enabled,
         staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
         refetchOnWindowFocus: false,
+        placeholderData: keepPreviousData,
         ...options,
     });
 }

@@ -16,7 +16,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function ArchitectDashboard() {
     const { user, userProperties } = usePage<SharedData>().props.auth;
     const userId = user.id;
-    const isAdmin = userProperties.isAdministrator;
+    const isManagerOrAbove = userProperties.isManagerOrAbove;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -37,7 +37,7 @@ export default function ArchitectDashboard() {
                     </div>
                 </div>
 
-                {isAdmin ? (
+                {isManagerOrAbove ? (
                     <Tabs defaultValue="own-architect">
                         <TabsList>
                             <TabsTrigger value="own-architect">

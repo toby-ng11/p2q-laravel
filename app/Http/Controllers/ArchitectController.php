@@ -2,13 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreArchitectRequest;
 use App\Models\Architect;
+use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\DB;
 
-class ArchitectController extends Controller
+class ArchitectController extends Controller implements HasMiddleware
 {
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    #[\Override]
+    public static function middleware()
+    {
+        return [
+            new Middleware(HandlePrecognitiveRequests::class, only: ['store']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -46,9 +61,19 @@ class ArchitectController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreArchitectRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        Architect::create([
+            'architect_name'    => $validated['architect_name'],
+            'architect_rep_id'  => $validated['architect_rep_id'],
+            'architect_type_id' => $validated['architect_type_id'],
+            'class_id'          => $validated['class_id'],
+        ]);
+
+        return to_route('dashboard.architect')
+            ->with('message', 'Architect created successfully.');
     }
 
     /**

@@ -16,4 +16,8 @@ class UserRole extends Model
     {
         return $this->hasMany(User::class);
     }
+
+    protected $casts = [
+        'id' => 'string',
+    ];
 }
