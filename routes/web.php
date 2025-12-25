@@ -28,6 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ]);
 
     Route::get('architect-reps', [ArchitectRepController::class, 'index'])->name('architect-reps.index');
+    Route::get('architect-reps/{user}', [ArchitectRepController::class, 'show'])->name('architect-reps.show');
 });
 
 require __DIR__ . '/settings.php';

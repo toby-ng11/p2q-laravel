@@ -1,3 +1,4 @@
+import { useDialog } from '@/components/dialog-context';
 import FormLayout from '@/components/form-layout';
 import InputError from '@/components/input-error';
 import { Input } from '@/components/ui/input';
@@ -9,22 +10,15 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { useTanStackQuery } from '@/hooks/use-tanstack-query';
+import {
+    useArchitectClasses,
+    useArchitectReps,
+    useArchitectTypes,
+} from '@/hooks/queries/useArchitectQueries';
 import { store } from '@/routes/architects';
 import { SharedData } from '@/types';
 import { Form, usePage } from '@inertiajs/react';
 import { Loader2 } from 'lucide-react';
-import { useDialog } from '../dialog-context';
-
-interface ArchitectType {
-    id: string;
-    architect_type_desc: string;
-}
-
-interface ArchitectRep {
-    id: string;
-    name: string;
-}
 
 interface ArchitectFormProps {
     formId: string;
@@ -36,16 +30,12 @@ export default function ArchitectForm({
     onProcessingChange,
 }: ArchitectFormProps) {
     const { user } = usePage<SharedData>().props.auth;
-    const { closeDialog } = useDialog('architectDialog');
     const isManagerOrAbove =
         usePage<SharedData>().props.auth.userProperties.isManagerOrAbove;
-    const architectTypes = useTanStackQuery<ArchitectType>('/architect-type', [
-        'architect-types',
-    ]);
-    const architectReps = useTanStackQuery<ArchitectRep>('/architect-reps', [
-        'architect-reps',
-    ]);
-    const architectClasses = ['A', 'B', 'C', 'D', 'E'];
+    const architectTypes = useArchitectTypes();
+    const architectReps = useArchitectReps();
+    const architectClasses = useArchitectClasses();
+    const { closeDialog } = useDialog('architectDialog');
 
     return (
         <Form
@@ -84,7 +74,7 @@ export default function ArchitectForm({
                                 {architectTypes.data?.map((type) => (
                                     <SelectItem
                                         key={type.architect_type_desc}
-                                        value={type.id}
+                                        value={type.id.toString()}
                                     >
                                         {type.architect_type_desc}
                                     </SelectItem>
@@ -114,7 +104,7 @@ export default function ArchitectForm({
                                         {architectReps.data?.map((type) => (
                                             <SelectItem
                                                 key={type.id}
-                                                value={type.id}
+                                                value={type.id.toString()}
                                             >
                                                 {type.name}
                                             </SelectItem>

@@ -2,6 +2,7 @@ import ArchitectTable from '@/components/dashboards/architect/architect-table';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
+import architects from '@/routes/architects';
 import { architect } from '@/routes/dashboard';
 import { SharedData, type BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
@@ -17,6 +18,11 @@ export default function ArchitectDashboard() {
     const { user, userProperties } = usePage<SharedData>().props.auth;
     const userId = user.id;
     const isManagerOrAbove = userProperties.isManagerOrAbove;
+    const options = {
+        query: {
+            user_id: userId,
+        },
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -50,7 +56,7 @@ export default function ArchitectDashboard() {
 
                         <TabsContent value="own-architect">
                             <ArchitectTable
-                                endpoint={'/architects?user_id=' + userId}
+                                endpoint={architects.index(options).url}
                                 tableInfo={{
                                     title: 'Own Architects',
                                     description:
@@ -60,7 +66,7 @@ export default function ArchitectDashboard() {
                         </TabsContent>
                         <TabsContent value="all-architect">
                             <ArchitectTable
-                                endpoint="/architects"
+                                endpoint={architects.index().url}
                                 tableInfo={{
                                     title: 'All Architects',
                                     description:
@@ -71,7 +77,7 @@ export default function ArchitectDashboard() {
                     </Tabs>
                 ) : (
                     <ArchitectTable
-                        endpoint={'/architects?user_id=' + userId}
+                        endpoint={architects.index(options).url}
                         tableInfo={{
                             title: 'Own Architects',
                             description: 'Here is the list of your architects.',

@@ -3,13 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreArchitectRequest;
+use App\Http\Requests\UpdateArchitectRequest;
 use App\Models\Architect;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ArchitectController extends Controller implements HasMiddleware
 {
@@ -61,18 +65,18 @@ class ArchitectController extends Controller implements HasMiddleware
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreArchitectRequest $request)
+    public function store(StoreArchitectRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 
-        Architect::create([
+        $architect = Architect::create([
             'architect_name'    => $validated['architect_name'],
             'architect_rep_id'  => $validated['architect_rep_id'],
             'architect_type_id' => $validated['architect_type_id'],
             'class_id'          => $validated['class_id'],
         ]);
 
-        return to_route('dashboard.architect')
+        return to_route('architects.edit', $architect)
             ->with('message', 'Architect created successfully.');
     }
 
@@ -87,15 +91,15 @@ class ArchitectController extends Controller implements HasMiddleware
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Architect $architect)
+    public function edit(Architect $architect): Response
     {
-        //
+        return Inertia::render('architects/edit', ['architect' => $architect]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Architect $architect)
+    public function update(UpdateArchitectRequest $request, Architect $architect)
     {
         //
     }

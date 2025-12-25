@@ -10,7 +10,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { useMemo } from 'react';
 
 interface ArchitectTable {
-    id: number | string;
+    id: number;
     architect_name: string;
     architect_rep: {
         name: string;
@@ -44,7 +44,7 @@ export default function ArchitectTable({
         isFetching,
         refetch,
         dataUpdatedAt,
-    } = useTanStackQuery<ArchitectTable>(endpoint, qKey);
+    } = useTanStackQuery<ArchitectTable[]>(endpoint, qKey);
 
     const columns = useMemo<ColumnDef<ArchitectTable>[]>(
         () => [
@@ -88,7 +88,7 @@ export default function ArchitectTable({
                     const architectId = row.getValue<number>('id');
                     return (
                         <Link
-                            href={architects.show(architectId)}
+                            href={architects.edit(architectId)}
                             className="text-blue-500 dark:text-blue-300"
                         >
                             {architectId}

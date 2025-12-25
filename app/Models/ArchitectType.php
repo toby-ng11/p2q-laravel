@@ -17,10 +17,6 @@ class ArchitectType extends Model
         'architect_type_desc',
     ];
 
-    protected $casts = [
-        'id' => 'string',
-    ];
-
     public function architects(): HasMany
     {
         return $this->hasMany(Architect::class);

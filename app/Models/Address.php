@@ -24,10 +24,6 @@ class Address extends Model
         'url',
     ];
 
-    protected $casts = [
-        'id' => 'string',
-    ];
-
     public function addressable(): MorphTo
     {
         return $this->morphTo();

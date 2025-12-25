@@ -30,6 +30,21 @@ class ArchitectRepController extends Controller
             );
         }
 
+        return response()->json([[
+            'id' => $user->id,
+            'name' => $user->name,
+        ]]);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(User $user): JsonResponse
+    {
+        if (! $user->user_role_id->atLeast(UserRole::ARCHREP)) {
+            abort(403);
+        }
+
         return response()->json([
             'id' => $user->id,
             'name' => $user->name,

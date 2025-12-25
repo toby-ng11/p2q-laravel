@@ -20,10 +20,6 @@ class Specifier extends Model
         'address_id',
     ];
 
-    protected $casts = [
-        'id' => 'string',
-    ];
-
     public function address(): MorphMany
     {
         return $this->morphMany(Address::class, 'addressable');
