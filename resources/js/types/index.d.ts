@@ -35,6 +35,13 @@ export interface SharedData {
     [key: string]: unknown;
 }
 
+export interface FlashData {
+    success?: string;
+    error?: string;
+    info?: string;
+    warning?: string;
+}
+
 export interface User {
     id: number;
     name: string;

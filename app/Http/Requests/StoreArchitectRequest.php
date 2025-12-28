@@ -13,7 +13,7 @@ class StoreArchitectRequest extends FormRequest
     public function authorize(): bool
     {
         $user = $this->user();
-        return $user ? $user->can('create', Architect::class) : false;
+        return $user && $user->can('create', Architect::class);
     }
 
     /**

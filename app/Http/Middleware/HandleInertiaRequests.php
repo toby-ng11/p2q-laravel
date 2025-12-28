@@ -53,6 +53,12 @@ class HandleInertiaRequests extends Middleware
                     'isAdministrator' => $user->isAdministrator(),
                 ] : [],
             ],
+            /*'flash' => [
+                'success' => fn(): mixed => $request->session()->get('success'),
+                'error' => fn(): mixed => $request->session()->get('error'),
+                'info' => fn(): mixed => $request->session()->get('info'),
+                'warning' => fn(): mixed => $request->session()->get('warning'),
+            ],*/ // No longer needed with Inertia 2.3.3+, now can use Inertia::flash() directly. Also adjust use-flash-toast.tsx accordingly.
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

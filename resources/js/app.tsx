@@ -1,16 +1,13 @@
 import '../css/app.css';
 
 import { FloatingThemeProvider } from '@/components/floating-theme-provider';
-import { Toaster } from '@/components/ui/sonner';
 import { initializeTheme, ThemeProvider } from '@/hooks/use-appearance';
 import { createInertiaApp } from '@inertiajs/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
-const queryClient = new QueryClient();
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
@@ -26,10 +23,7 @@ createInertiaApp({
             <StrictMode>
                 <ThemeProvider>
                     <FloatingThemeProvider>
-                        <QueryClientProvider client={queryClient}>
-                            <App {...props} />
-                            <Toaster richColors position="top-right" />
-                        </QueryClientProvider>
+                        <App {...props} />
                     </FloatingThemeProvider>
                 </ThemeProvider>
             </StrictMode>,

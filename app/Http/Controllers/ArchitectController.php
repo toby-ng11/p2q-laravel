@@ -11,7 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -37,17 +37,21 @@ class ArchitectController extends Controller implements HasMiddleware
         $userId = $request->input('user_id', null);
 
         if ($userId) {
+            /** @psalm-suppress UndefinedMagicMethod */
             $architects = Architect::select()
                 ->where('architect_rep_id', $userId)
                 ->with(['architectType:id,architect_type_desc', 'architectRep:id,name'])
                 ->get();
+
             return response()->json($architects->toArray());
         }
 
         if ($user && $user->isAdministrator()) {
+            /** @psalm-suppress UndefinedMagicMethod */
             $architects = Architect::select()
                 ->with(['architectType:id,architect_type_desc', 'architectRep:id,name'])
                 ->get();
+
             return response()->json($architects->toArray());
         }
 
@@ -70,14 +74,15 @@ class ArchitectController extends Controller implements HasMiddleware
         $validated = $request->validated();
 
         $architect = Architect::create([
-            'architect_name'    => $validated['architect_name'],
-            'architect_rep_id'  => $validated['architect_rep_id'],
+            'architect_name' => $validated['architect_name'],
+            'architect_rep_id' => $validated['architect_rep_id'],
             'architect_type_id' => $validated['architect_type_id'],
-            'class_id'          => $validated['class_id'],
+            'class_id' => $validated['class_id'],
         ]);
 
-        return to_route('architects.edit', $architect)
-            ->with('message', 'Architect created successfully.');
+        Inertia::flash('success', 'Architect created successfully.');
+
+        return to_route('architects.edit', $architect);
     }
 
     /**
@@ -99,9 +104,28 @@ class ArchitectController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateArchitectRequest $request, Architect $architect)
+    public function update(UpdateArchitectRequest $request, Architect $architect): RedirectResponse
     {
-        //
+        $validated = $request->validated();
+        $user = $request->user();
+
+        if ($user && ! $user->isManagerOrAbove()) {
+            /** @var \Illuminate\Support\ValidatedInput */
+            $data = $request->safe();
+            $validated = $data->except('architect_rep_id');
+        }
+
+        $result = $architect->update($validated);
+
+        if ($result) {
+            Inertia::flash('success', 'Architect saved!');
+
+            return back();
+        }
+
+        Inertia::flash('error', 'Something went wrong, please try again.');
+
+        return back();
     }
 
     /**

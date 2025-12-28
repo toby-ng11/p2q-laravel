@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Architect;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class UpdateArchitectRequest extends FormRequest
 {
@@ -11,7 +14,14 @@ class UpdateArchitectRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        $architect = $this->route('architect') ?? '';
+        $user = $this->user();
+
+        if (! $architect || ! $user) {
+            return false;
+        }
+
+        return $user->can('update', $architect);
     }
 
     /**
@@ -22,7 +32,14 @@ class UpdateArchitectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'architect_name' => [
+                'required',
+                'max:255',
+                Rule::unique('architects')->ignore($this->route('architect')),
+            ],
+            'architect_rep_id' => 'required',
+            'architect_type_id' => 'required',
+            'class_id' => 'nullable|string|max:1',
         ];
     }
 }

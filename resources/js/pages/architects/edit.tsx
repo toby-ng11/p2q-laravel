@@ -3,15 +3,8 @@ import AppLayout from '@/layouts/app-layout';
 import { edit } from '@/routes/architects';
 import { architect as architectDashboardUrl } from '@/routes/dashboard';
 import { SharedData, type BreadcrumbItem } from '@/types';
+import { Architect } from '@/types/architect';
 import { Head, usePage } from '@inertiajs/react';
-
-interface Architect {
-    id: number;
-    architect_name: string;
-    architect_type_id: number;
-    architect_rep_id: number;
-    class_id: string;
-}
 
 export default function ArchitectEdit() {
     const { architect } = usePage<SharedData & { architect: Architect }>()
