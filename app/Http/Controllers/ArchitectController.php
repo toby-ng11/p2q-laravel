@@ -5,18 +5,22 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreArchitectRequest;
 use App\Http\Requests\UpdateArchitectRequest;
 use App\Models\Architect;
+use App\Services\ArchitectService;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class ArchitectController extends Controller implements HasMiddleware
 {
+    public function __construct(protected ArchitectService $architectService) {}
+
     /**
      * Get the middleware that should be assigned to the controller.
      */
@@ -36,32 +40,13 @@ class ArchitectController extends Controller implements HasMiddleware
         $user = $request->user();
         $userId = $request->input('user_id', null);
 
-        if ($userId) {
-            /** @psalm-suppress UndefinedMagicMethod */
-            $architects = Architect::select()
-                ->where('architect_rep_id', $userId)
-                ->with(['architectType:id,architect_type_desc', 'architectRep:id,name'])
-                ->get();
-
-            return response()->json($architects->toArray());
-        }
-
-        if ($user && $user->isAdministrator()) {
-            /** @psalm-suppress UndefinedMagicMethod */
-            $architects = Architect::select()
-                ->with(['architectType:id,architect_type_desc', 'architectRep:id,name'])
-                ->get();
-
-            return response()->json($architects->toArray());
-        }
-
-        return response()->json(['User ID is required.']);
+        return $this->architectService->fetchArchitects($user, $userId);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): void
     {
         //
     }
@@ -72,13 +57,8 @@ class ArchitectController extends Controller implements HasMiddleware
     public function store(StoreArchitectRequest $request): RedirectResponse
     {
         $validated = $request->validated();
-
-        $architect = Architect::create([
-            'architect_name' => $validated['architect_name'],
-            'architect_rep_id' => $validated['architect_rep_id'],
-            'architect_type_id' => $validated['architect_type_id'],
-            'class_id' => $validated['class_id'],
-        ]);
+        $architect = new Architect($validated);
+        $architect->save();
 
         Inertia::flash('success', 'Architect created successfully.');
 
@@ -88,7 +68,7 @@ class ArchitectController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(Architect $architect)
+    public function show(Architect $architect): void
     {
         //
     }
@@ -98,6 +78,7 @@ class ArchitectController extends Controller implements HasMiddleware
      */
     public function edit(Architect $architect): Response
     {
+        Gate::authorize('view', $architect);
         return Inertia::render('architects/edit', ['architect' => $architect]);
     }
 
@@ -131,7 +112,7 @@ class ArchitectController extends Controller implements HasMiddleware
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Architect $architect)
+    public function destroy(Architect $architect): void
     {
         //
     }

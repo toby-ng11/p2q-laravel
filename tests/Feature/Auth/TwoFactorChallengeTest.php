@@ -12,6 +12,11 @@ class TwoFactorChallengeTest extends TestCase
 {
     use RefreshDatabase;
 
+    private function user(): User
+    {
+        return User::factory()->create();
+    }
+
     public function test_two_factor_challenge_redirects_to_login_when_not_authenticated(): void
     {
         if (! Features::canManageTwoFactorAuthentication()) {
@@ -34,7 +39,7 @@ class TwoFactorChallengeTest extends TestCase
             'confirmPassword' => true,
         ]);
 
-        $user = User::factory()->create();
+        $user = $this->user();
 
         $user->forceFill([
             'two_factor_secret' => encrypt('test-secret'),

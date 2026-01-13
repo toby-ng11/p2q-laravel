@@ -11,9 +11,14 @@ class PasswordConfirmationTest extends TestCase
 {
     use RefreshDatabase;
 
+    private function user(): User
+    {
+        return User::factory()->create();
+    }
+
     public function test_confirm_password_screen_can_be_rendered()
     {
-        $user = User::factory()->create();
+        $user = $this->user();
 
         $response = $this->actingAs($user)->get(route('password.confirm'));
 

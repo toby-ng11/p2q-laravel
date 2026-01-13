@@ -81,6 +81,10 @@ class ArchitectPolicyTest extends TestCase
             'id' => $architect->id,
             'architect_rep_id' => $rep2->id, // should NOT be updated
         ]);
+
+        $this->actingAs($rep1)
+            ->get(route('architects.edit', $architect))
+            ->assertStatus(200);
     }
 
     public function test_archrep_cannot_update_others_architect(): void
@@ -89,6 +93,10 @@ class ArchitectPolicyTest extends TestCase
         $other = $this->user(UserRole::ARCHREP);
 
         $architect = Architect::factory()->create(['architect_rep_id' => $other->id]);
+
+        $this->actingAs($rep)
+            ->get(route('architects.edit', $architect))
+            ->assertStatus(403);
 
         $this->assertFalse(
             $this->policy->update($rep, $architect)
@@ -115,6 +123,10 @@ class ArchitectPolicyTest extends TestCase
         $this->assertTrue(
             $this->policy->view($sales, $architect)
         );
+
+        $this->actingAs($sales)
+            ->get(route('architects.edit', $architect))
+            ->assertStatus(200);
     }
 
     public function test_sales_cannot_update_architect(): void
@@ -127,10 +139,28 @@ class ArchitectPolicyTest extends TestCase
         );
     }
 
+    public function test_sales_cannot_create_architect()
+    {
+        $sales = $this->user(UserRole::SALES);
+        $architect = Architect::factory()->create();
+
+        $this->actingAs($sales)
+            ->post('/architects', $architect->toArray())
+            ->assertStatus(403);
+
+        $this->assertFalse(
+            $this->policy->create($sales)
+        );
+    }
+
     public function test_manager_can_update_any_architect(): void
     {
         $manager = $this->user(UserRole::MANAGER);
         $architect = Architect::factory()->create();
+
+        $this->actingAs($manager)
+            ->get(route('architects.edit', $architect))
+            ->assertStatus(200);
 
         $this->assertTrue(
             $this->policy->update($manager, $architect)
@@ -142,8 +172,41 @@ class ArchitectPolicyTest extends TestCase
         $admin = $this->user(UserRole::ADMIN);
         $architect = Architect::factory()->create();
 
+        $this->assertTrue($this->policy->create($admin));
         $this->assertTrue($this->policy->delete($admin, $architect));
         $this->assertTrue($this->policy->update($admin, $architect));
         $this->assertTrue($this->policy->view($admin, $architect));
+
+        $this->actingAs($admin)
+            ->get(route('architects.edit', $architect))
+            ->assertStatus(200);
+    }
+
+    public function test_guest_cannot_update_architect()
+    {
+        $guest = $this->user(UserRole::GUEST);
+        $architect = Architect::factory()->create();
+
+        $this->actingAs($guest)
+            ->get(route('architects.edit', $architect))
+            ->assertStatus(403);
+
+        $this->assertFalse(
+            $this->policy->view($guest, $architect)
+        );
+    }
+
+    public function test_guest_cannot_create_architect()
+    {
+        $guest = $this->user(UserRole::GUEST);
+        $architect = Architect::factory()->create();
+
+        $this->actingAs($guest)
+            ->post('/architects', $architect->toArray())
+            ->assertStatus(403);
+
+        $this->assertFalse(
+            $this->policy->create($guest)
+        );
     }
 }

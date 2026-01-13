@@ -70,6 +70,7 @@ interface DataTableProps<TData, TValue> {
     hasFacetedFilter?: { facetedFilters?: FacetedFilterConfig[] };
     hasSelect?: boolean;
     isFetching?: boolean;
+    tableSkeleton?: { rows: number; columns: number };
 }
 
 export function DataTable<TData, TValue>({
@@ -78,14 +79,12 @@ export function DataTable<TData, TValue>({
     paginationState = { pageIndex: 0, pageSize: 10 },
     sortingColumns = [{ id: 'id', desc: true }],
     hasPagination = false,
-    hasSearch = { searchColumn: 'name', searchPlaceholder: 'Search users...' },
-    hasVisibilityControl = {
-        retriveEndpoint: '/endpoint',
-        saveEndpoint: '/endpoint',
-    },
+    hasSearch,
+    hasVisibilityControl,
     hasFacetedFilter = { facetedFilters: [] },
     hasSelect = false,
     isFetching = false,
+    tableSkeleton = { rows: 10, columns: 5 },
 }: DataTableProps<TData, TValue>) {
     const PaginationRowSelectedNumber = () => (
         <div className="flex-1 text-sm text-muted-foreground">
@@ -223,28 +222,34 @@ export function DataTable<TData, TValue>({
 
     // Restore saved visibility
     useEffect(() => {
-        axios
-            .get(hasVisibilityControl.retriveEndpoint || '/endpoint')
-            .then((res) => {
-                setColumnVisibility(res.data || {});
-                lastSavedVisibility.current = res.data;
-                setIsReady(true);
-            });
-    }, [hasVisibilityControl.retriveEndpoint]);
+        if (hasVisibilityControl) {
+            axios
+                .get(hasVisibilityControl.retriveEndpoint || '/endpoint')
+                .then((res) => {
+                    setColumnVisibility(res.data || {});
+                    lastSavedVisibility.current = res.data;
+                    setIsReady(true);
+                });
+        } else {
+            setIsReady(true);
+        }
+    }, [hasVisibilityControl]);
 
     useEffect(() => {
-        if (!isReady) return;
+        if (hasVisibilityControl) {
+            if (!isReady) return;
 
-        const current = JSON.stringify(columnVisibility);
-        const previous = JSON.stringify(lastSavedVisibility.current);
+            const current = JSON.stringify(columnVisibility);
+            const previous = JSON.stringify(lastSavedVisibility.current);
 
-        if (current !== previous) {
-            axios.post(hasVisibilityControl.saveEndpoint || '/endpoint', {
-                value: columnVisibility,
-            });
-            lastSavedVisibility.current = columnVisibility;
+            if (current !== previous) {
+                axios.post(hasVisibilityControl.saveEndpoint || '/endpoint', {
+                    value: columnVisibility,
+                });
+                lastSavedVisibility.current = columnVisibility;
+            }
         }
-    }, [columnVisibility, isReady, hasVisibilityControl.saveEndpoint]);
+    }, [columnVisibility, isReady, hasVisibilityControl]);
 
     // waiting for tanstack to fix this :)
     // eslint-disable-next-line react-hooks/incompatible-library
@@ -268,99 +273,112 @@ export function DataTable<TData, TValue>({
         },
     });
 
-    const searchCol = table.getColumn(hasSearch.searchColumn);
+    const searchCol = hasSearch
+        ? table.getColumn(hasSearch.searchColumn)
+        : undefined;
 
     return isReady && !isFetching ? (
         <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-                <div className="flex flex-1 items-center gap-2">
-                    {hasSearch && searchCol && (
-                        <Input
-                            placeholder={hasSearch.searchPlaceholder}
-                            value={(searchCol.getFilterValue() as string) ?? ''}
-                            onChange={(event) =>
-                                searchCol.setFilterValue(event.target.value)
-                            }
-                            className="h-8 w-37.5 lg:w-62.5"
-                        />
-                    )}
-                    {hasFacetedFilter.facetedFilters !== undefined &&
-                        hasFacetedFilter.facetedFilters.length > 0 && (
-                            <>
-                                <div className="hidden flex-wrap gap-2 lg:flex">
-                                    {hasFacetedFilter.facetedFilters.map(
-                                        ({ columnId, title }) => {
-                                            const col =
-                                                table.getColumn(columnId);
-                                            return (
-                                                col && (
-                                                    <DataTableFacetedFilter
-                                                        key={columnId}
-                                                        column={col}
-                                                        title={title}
-                                                        options={getColumnOptions(
-                                                            col,
-                                                        )}
-                                                    />
-                                                )
-                                            );
-                                        },
-                                    )}
-                                </div>
-
-                                <div className="flex lg:hidden">
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                className="h-8"
-                                            >
-                                                <PlusCircle className="size-4" />
-                                                Filters
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent
-                                            className="w-fit max-w-100 p-4"
-                                            align="start"
-                                        >
-                                            <div className="flex flex-col gap-2">
-                                                {hasFacetedFilter.facetedFilters.map(
-                                                    ({ columnId, title }) => {
-                                                        const col =
-                                                            table.getColumn(
-                                                                columnId,
-                                                            );
-                                                        return (
-                                                            col && (
-                                                                <DataTableFacetedFilter
-                                                                    key={
-                                                                        columnId
-                                                                    }
-                                                                    column={col}
-                                                                    title={
-                                                                        title
-                                                                    }
-                                                                    options={getColumnOptions(
-                                                                        col,
-                                                                    )}
-                                                                />
-                                                            )
-                                                        );
-                                                    },
-                                                )}
-                                            </div>
-                                        </PopoverContent>
-                                    </Popover>
-                                </div>
-                            </>
+            {hasSearch && hasFacetedFilter && hasVisibilityControl && (
+                <div className="flex items-center justify-between">
+                    <div className="flex flex-1 items-center gap-2">
+                        {hasSearch && searchCol && (
+                            <Input
+                                placeholder={hasSearch.searchPlaceholder}
+                                value={
+                                    (searchCol.getFilterValue() as string) ?? ''
+                                }
+                                onChange={(event) =>
+                                    searchCol.setFilterValue(event.target.value)
+                                }
+                                className="h-8 w-37.5 lg:w-62.5"
+                            />
                         )}
-                </div>
+                        {hasFacetedFilter.facetedFilters !== undefined &&
+                            hasFacetedFilter.facetedFilters.length > 0 && (
+                                <>
+                                    <div className="hidden flex-wrap gap-2 lg:flex">
+                                        {hasFacetedFilter.facetedFilters.map(
+                                            ({ columnId, title }) => {
+                                                const col =
+                                                    table.getColumn(columnId);
+                                                return (
+                                                    col && (
+                                                        <DataTableFacetedFilter
+                                                            key={columnId}
+                                                            column={col}
+                                                            title={title}
+                                                            options={getColumnOptions(
+                                                                col,
+                                                            )}
+                                                        />
+                                                    )
+                                                );
+                                            },
+                                        )}
+                                    </div>
 
-                <div className="flex items-center gap-4">
-                    <VisibilityOptions />
+                                    <div className="flex lg:hidden">
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    className="h-8"
+                                                >
+                                                    <PlusCircle className="size-4" />
+                                                    Filters
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent
+                                                className="w-fit max-w-100 p-4"
+                                                align="start"
+                                            >
+                                                <div className="flex flex-col gap-2">
+                                                    {hasFacetedFilter.facetedFilters.map(
+                                                        ({
+                                                            columnId,
+                                                            title,
+                                                        }) => {
+                                                            const col =
+                                                                table.getColumn(
+                                                                    columnId,
+                                                                );
+                                                            return (
+                                                                col && (
+                                                                    <DataTableFacetedFilter
+                                                                        key={
+                                                                            columnId
+                                                                        }
+                                                                        column={
+                                                                            col
+                                                                        }
+                                                                        title={
+                                                                            title
+                                                                        }
+                                                                        options={getColumnOptions(
+                                                                            col,
+                                                                        )}
+                                                                    />
+                                                                )
+                                                            );
+                                                        },
+                                                    )}
+                                                </div>
+                                            </PopoverContent>
+                                        </Popover>
+                                    </div>
+                                </>
+                            )}
+                    </div>
+
+                    {hasVisibilityControl && (
+                        <div className="flex items-center gap-4">
+                            <VisibilityOptions />
+                        </div>
+                    )}
                 </div>
-            </div>
+            )}
 
             <div className="overflow-hidden rounded-md border">
                 <Table>
@@ -416,32 +434,33 @@ export function DataTable<TData, TValue>({
                 </Table>
             </div>
 
-            <div className="flex items-center justify-between px-2">
-                {hasPagination && (
-                    <>
-                        {hasSelect ? (
-                            <>
-                                <PaginationRowSelectedNumber />
-                                <div className="flex items-center space-x-6 lg:space-x-8">
-                                    <PaginationPageSize />
-                                    <PaginationPageIndex />
-                                    <PaginationButtonGroup />
-                                </div>
-                            </>
-                        ) : (
-                            <>
+            {hasPagination && (
+                <div className="flex items-center justify-between px-2">
+                    {hasSelect ? (
+                        <>
+                            <PaginationRowSelectedNumber />
+                            <div className="flex items-center space-x-6 lg:space-x-8">
                                 <PaginationPageSize />
-                                <div className="flex items-center space-x-6 lg:space-x-8">
-                                    <PaginationPageIndex />
-                                    <PaginationButtonGroup />
-                                </div>
-                            </>
-                        )}
-                    </>
-                )}
-            </div>
+                                <PaginationPageIndex />
+                                <PaginationButtonGroup />
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <PaginationPageSize />
+                            <div className="flex items-center space-x-6 lg:space-x-8">
+                                <PaginationPageIndex />
+                                <PaginationButtonGroup />
+                            </div>
+                        </>
+                    )}
+                </div>
+            )}
         </div>
     ) : (
-        <DataTableSkeleton rows={10} cols={5} />
+        <DataTableSkeleton
+            rows={tableSkeleton.rows}
+            cols={tableSkeleton.columns}
+        />
     );
 }

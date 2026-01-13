@@ -12,6 +12,11 @@ class PasswordResetTest extends TestCase
 {
     use RefreshDatabase;
 
+    private function user(): User
+    {
+        return User::factory()->create();
+    }
+
     public function test_reset_password_link_screen_can_be_rendered()
     {
         $response = $this->get(route('password.request'));
@@ -23,7 +28,7 @@ class PasswordResetTest extends TestCase
     {
         Notification::fake();
 
-        $user = User::factory()->create();
+        $user = $this->user();
 
         $this->post(route('password.email'), ['email' => $user->email]);
 
@@ -34,7 +39,7 @@ class PasswordResetTest extends TestCase
     {
         Notification::fake();
 
-        $user = User::factory()->create();
+        $user = $this->user();
 
         $this->post(route('password.email'), ['email' => $user->email]);
 
@@ -51,7 +56,7 @@ class PasswordResetTest extends TestCase
     {
         Notification::fake();
 
-        $user = User::factory()->create();
+        $user = $this->user();
 
         $this->post(route('password.email'), ['email' => $user->email]);
 
@@ -73,7 +78,7 @@ class PasswordResetTest extends TestCase
 
     public function test_password_cannot_be_reset_with_invalid_token(): void
     {
-        $user = User::factory()->create();
+        $user = $this->user();
 
         $response = $this->post(route('password.update'), [
             'token' => 'invalid-token',

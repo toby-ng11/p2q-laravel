@@ -2,8 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\UserRole;
 use App\Models\Architect;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreArchitectRequest extends FormRequest
 {
@@ -25,7 +28,12 @@ class StoreArchitectRequest extends FormRequest
     {
         return [
             'architect_name' => 'required|max:255|unique:architects',
-            'architect_rep_id' => 'required',
+            'architect_rep_id' => [
+                'required',
+                Rule::exists('users', 'id')->where(function (Builder $query) {
+                    $query->where('user_role_id', '>=', UserRole::ARCHREP);
+                }),
+            ],
             'architect_type_id' => 'required',
             'class_id' => 'nullable|string|max:1',
         ];

@@ -12,6 +12,11 @@ class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
+    private function user(): User
+    {
+        return User::factory()->create();
+    }
+
     public function test_login_screen_can_be_rendered()
     {
         $response = $this->get(route('login'));
@@ -63,7 +68,7 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_not_authenticate_with_invalid_password()
     {
-        $user = User::factory()->create();
+        $user = $this->user();
 
         $this->post(route('login.store'), [
             'email' => $user->email,
@@ -75,7 +80,7 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_logout()
     {
-        $user = User::factory()->create();
+        $user = $this->user();
 
         $response = $this->actingAs($user)->post(route('logout'));
 
@@ -85,9 +90,9 @@ class AuthenticationTest extends TestCase
 
     public function test_users_are_rate_limited()
     {
-        $user = User::factory()->create();
+        $user = $this->user();
 
-        RateLimiter::increment(md5('login'.implode('|', [$user->email, '127.0.0.1'])), amount: 5);
+        RateLimiter::increment(md5('login' . implode('|', [$user->email, '127.0.0.1'])), amount: 5);
 
         $response = $this->post(route('login.store'), [
             'email' => $user->email,

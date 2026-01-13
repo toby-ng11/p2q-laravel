@@ -23,7 +23,7 @@ class ArchitectRepController extends Controller
         if ($user->isManagerOrAbove()) {
             return response()->json(
                 User::query()
-                    ->where('user_role_id', UserRole::ARCHREP)
+                    ->where('user_role_id', '>=',  UserRole::ARCHREP)
                     ->select(['id', 'name'])
                     ->orderBy('name')
                     ->get()

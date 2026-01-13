@@ -10,6 +10,19 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * @property int $architect_rep_id
+ * @property int $id
+ * @property string $architect_name
+ * @property int $architect_type_id
+ * @property string|null $class_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Address> $addresses
+ * @property-read int|null $addresses_count
+ * @property-read \App\Models\User|null $architectRep
+ * @property-read \App\Models\ArchitectType $architectType
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Specifier> $specifiers
+ * @property-read int|null $specifiers_count
+ * @method static \Database\Factories\ArchitectFactory factory($count = null, $state = [])
  */
 class Architect extends Model
 {

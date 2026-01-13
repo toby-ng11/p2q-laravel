@@ -12,11 +12,16 @@ class VerificationNotificationTest extends TestCase
 {
     use RefreshDatabase;
 
+    private function userWithProperties(array $properties): User
+    {
+        return User::factory()->create($properties);
+    }
+
     public function test_sends_verification_notification(): void
     {
         Notification::fake();
 
-        $user = User::factory()->create([
+        $user = $this->userWithProperties([
             'email_verified_at' => null,
         ]);
 
@@ -31,7 +36,7 @@ class VerificationNotificationTest extends TestCase
     {
         Notification::fake();
 
-        $user = User::factory()->create([
+        $user = $this->userWithProperties([
             'email_verified_at' => now(),
         ]);
 

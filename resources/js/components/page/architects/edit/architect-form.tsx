@@ -27,7 +27,7 @@ import { useTanStackQuery } from '@/hooks/use-tanstack-query';
 import architectReps from '@/routes/architect-reps';
 import { update } from '@/routes/architects';
 import { SharedData } from '@/types';
-import { Architect, ArchitectRep } from '@/types/architect';
+import { Architect, ArchitectRep } from '@/types/app/architect';
 import { Form, usePage } from '@inertiajs/react';
 
 export function ArchitectEditForm({ architect }: { architect: Architect }) {
@@ -40,6 +40,12 @@ export function ArchitectEditForm({ architect }: { architect: Architect }) {
         architectReps.show(architect.architect_rep_id).url,
         ['architect-reps', architect.architect_rep_id],
     );
+
+    const isLoadingForManager =
+        architectTypeData.isLoading || architectRepData.isLoading;
+
+    const isLoadingForArchitectRep =
+        architectTypeData.isLoading || ownArchitectRepData.isLoading;
 
     return (
         <Form {...update.form(architect.id)}>
@@ -193,7 +199,14 @@ export function ArchitectEditForm({ architect }: { architect: Architect }) {
                         orientation="horizontal"
                         className="flex justify-end"
                     >
-                        <Button type="submit" disabled={processing}>
+                        <Button
+                            type="submit"
+                            disabled={
+                                isManagerOrAbove
+                                    ? processing || isLoadingForManager
+                                    : processing || isLoadingForArchitectRep
+                            }
+                        >
                             Submit
                             {processing && <Spinner />}
                         </Button>

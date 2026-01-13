@@ -1,7 +1,7 @@
 import { useTanStackQuery } from '@/hooks/use-tanstack-query';
 import architectReps from '@/routes/architect-reps';
 import architectType from '@/routes/architect-type';
-import { ArchitectRep, ArchitectType } from '@/types/architect';
+import { ArchitectRep, ArchitectType } from '@/types/app/architect';
 
 const useArchitectClasses = () => ['A', 'B', 'C', 'D', 'E'];
 

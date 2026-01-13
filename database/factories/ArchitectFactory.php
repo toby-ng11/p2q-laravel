@@ -26,7 +26,7 @@ class ArchitectFactory extends Factory
         return [
             'architect_name' => fake()->unique()->company(),
             'architect_rep_id' =>
-            User::where('user_role_id', UserRole::ARCHREP)->inRandomOrder()->first()->id ??
+            User::where('user_role_id', '>=', UserRole::ARCHREP)->inRandomOrder()->first()->id ??
             User::factory()->state(['user_role_id' => UserRole::ARCHREP]),
             'architect_type_id' => ArchitectType::inRandomOrder()->first()->id,
             'class_id' => fake()->randomElement(['A', 'B', 'C', 'D', 'E']),

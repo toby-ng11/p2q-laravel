@@ -58,11 +58,21 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Check if user is administrator.
+     *
+     * @return bool
+     */
     public function isAdministrator(): bool
     {
         return $this->user_role_id === UserRole::ADMIN;
     }
 
+    /**
+     * Check if user is manager or above.
+     *
+     * @return bool
+     */
     public function isManagerOrAbove(): bool
     {
         return $this->user_role_id->atLeast(UserRole::MANAGER);

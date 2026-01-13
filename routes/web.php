@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ArchitectAddressController;
 use App\Http\Controllers\ArchitectController;
 use App\Http\Controllers\ArchitectRepController;
 use App\Http\Controllers\ArchitectTypeController;
@@ -21,6 +22,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resources([
         'architects' => ArchitectController::class,
+        'architects.addresses' => ArchitectAddressController::class,
     ]);
 
     Route::apiResources([

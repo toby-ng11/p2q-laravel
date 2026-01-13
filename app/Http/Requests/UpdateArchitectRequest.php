@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\UserRole;
 use App\Models\Architect;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
@@ -37,7 +39,12 @@ class UpdateArchitectRequest extends FormRequest
                 'max:255',
                 Rule::unique('architects')->ignore($this->route('architect')),
             ],
-            'architect_rep_id' => 'required',
+            'architect_rep_id' => [
+                'required',
+                Rule::exists('users', 'id')->where(function (Builder $query) {
+                    $query->where('user_role_id', '>=', UserRole::ARCHREP);
+                }),
+            ],
             'architect_type_id' => 'required',
             'class_id' => 'nullable|string|max:1',
         ];

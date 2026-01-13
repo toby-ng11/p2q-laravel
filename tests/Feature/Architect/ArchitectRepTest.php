@@ -28,9 +28,10 @@ class ArchitectRepTest extends TestCase
         $this->actingAs($admin)
             ->getJson(route('architect-reps.index'))
             ->assertOk()
-            ->assertJsonCount(2)
+            ->assertJsonCount(3) // including admin
             ->assertJsonFragment(['id' => $rep1->id])
-            ->assertJsonFragment(['id' => $rep2->id]);
+            ->assertJsonFragment(['id' => $rep2->id])
+            ->assertJsonFragment(['id' => $admin->id]);
     }
 
     public function test_manager_can_view_all_architect_reps()
