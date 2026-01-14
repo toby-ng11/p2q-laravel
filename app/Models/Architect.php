@@ -37,6 +37,18 @@ class Architect extends Model
         'class_id',
     ];
 
+    /**
+     * Perform any actions required after the model boots.
+     */
+    #[\Override]
+    protected static function booted()
+    {
+        static::deleting(function (Architect $architect) {
+            // This ensures addresses are deleted when the architect is
+            $architect->addresses()->delete();
+        });
+    }
+
     public function addresses(): MorphMany
     {
         return $this->morphMany(Address::class, 'addressable');

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('first_name', 100);
             $table->string('last_name', 100)->nullable();
             $table->string('job_title', 100)->nullable();
-            $table->foreignId('architect_id')->constrained();
+            $table->foreignId('architect_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

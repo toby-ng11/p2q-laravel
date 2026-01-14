@@ -53,6 +53,70 @@ class ArchitectTest extends TestCase
         $this->assertDatabaseHas('architects', $architect);
     }
 
+    public function test_any_architect_can_be_deleted_if_rep_role_is_manager_or_above()
+    {
+        $highRoleUser = $this->makeUserWithRole(UserRole::MANAGER);
+        $architect1 = Architect::factory()->create();
+        $architect2 = Architect::factory()->create();
+        $architectId1 = $architect1->id;
+        $architectId2 = $architect2->id;
+
+        $this->actingAs($highRoleUser)
+            ->delete("/architects/$architectId1")
+            ->assertValid()
+            ->assertRedirectBack();
+
+        $this->actingAs($highRoleUser)
+            ->delete("/architects/$architectId2")
+            ->assertValid()
+            ->assertRedirectBack();
+
+        $this->assertDatabaseMissing('architects', [
+            'id' => $architectId1
+        ]);
+
+        $this->assertDatabaseMissing('architects', [
+            'id' => $architectId2
+        ]);
+    }
+
+    public function test_own_architect_can_be_deleted_if_rep_role_is_arch_rep()
+    {
+        $rep = $this->makeUserWithRole(UserRole::ARCHREP);
+        $architect = Architect::factory()->create([
+            'architect_rep_id' => $rep->id,
+        ]);
+        $architectId = $architect->id;
+
+        $this->actingAs($rep)
+            ->delete("/architects/$architectId")
+            ->assertValid()
+            ->assertRedirectBack();
+
+        $this->assertDatabaseMissing('architects', [
+            'id' => $architectId
+        ]);
+    }
+
+    public function test_rep_cannot_delete_othere_rep_architects()
+    {
+        $rep1 = $this->makeUserWithRole(UserRole::ARCHREP);
+        $rep2 = $this->makeUserWithRole(UserRole::ARCHREP);
+        $otherArchitect = Architect::factory()->create([
+            'architect_rep_id' => $rep2->id,
+        ]);
+        $otherArchitectId = $otherArchitect->id;
+
+        $this->actingAs($rep1)
+            ->delete("/architects/$otherArchitectId")
+            ->assertValid()
+            ->assertForbidden();
+
+        $this->assertDatabaseHas('architects', [
+            'id' => $otherArchitectId
+        ]);
+    }
+
     public function test_any_architect_address_can_be_created_if_rep_role_is_manager_or_above()
     {
         $highRoleUser = $this->makeUserWithRole(UserRole::MANAGER);

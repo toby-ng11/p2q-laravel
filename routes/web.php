@@ -3,6 +3,7 @@
 use App\Http\Controllers\ArchitectAddressController;
 use App\Http\Controllers\ArchitectController;
 use App\Http\Controllers\ArchitectRepController;
+use App\Http\Controllers\ArchitectSpecifierController;
 use App\Http\Controllers\ArchitectTypeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserPreferenceController;
@@ -27,6 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::apiResources([
         'architect-type' => ArchitectTypeController::class,
         'architects.addresses' => ArchitectAddressController::class,
+        'architects.specifiers' => ArchitectSpecifierController::class,
     ]);
 
     Route::get('architect-reps', [ArchitectRepController::class, 'index'])->name('architect-reps.index');

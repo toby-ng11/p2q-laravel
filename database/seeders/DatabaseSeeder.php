@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Architect;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -14,10 +15,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::factory(20)->create();
+        Architect::factory(100)->create();
 
         $this->call([
-            //ArchitectTypeSeeder::class,
-            ArchitectSeeder::class,
+            //
         ]);
     }
 }

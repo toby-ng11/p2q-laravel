@@ -6,6 +6,7 @@ use App\Http\Requests\StoreArchitectRequest;
 use App\Http\Requests\UpdateArchitectRequest;
 use App\Models\Architect;
 use App\Services\ArchitectService;
+use Exception;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -46,9 +47,9 @@ class ArchitectController extends Controller implements HasMiddleware
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): void
+    public function create(): RedirectResponse
     {
-        //
+        return to_route('dashboard.architect');
     }
 
     /**
@@ -72,9 +73,9 @@ class ArchitectController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(Architect $architect): void
+    public function show(Architect $architect): RedirectResponse
     {
-        //
+        return to_route('architects.edit', $architect);
     }
 
     /**
@@ -116,8 +117,18 @@ class ArchitectController extends Controller implements HasMiddleware
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Architect $architect): void
+    public function destroy(Architect $architect): RedirectResponse
     {
-        //
+        Gate::authorize('delete', $architect);
+        try {
+            $architect->delete();
+
+            Inertia::flash('success', 'Architect deleted!');
+            return back();
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            Inertia::flash('error', 'Deletion failed.');
+            return back();
+        }
     }
 }
