@@ -9,6 +9,7 @@ use App\Models\Architect;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
@@ -25,11 +26,11 @@ class ArchitectAddressController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display the specified resource.
      */
-    public function create()
+    public function show(Architect $architect, Address $address): RedirectResponse
     {
-        //
+        return to_route('architects.edit', $architect);
     }
 
     /**
@@ -39,27 +40,15 @@ class ArchitectAddressController extends Controller
     {
         $validated = $request->validated();
         $address = new Address($validated);
-        $architect->addresses()->save($address);
+        $result = $architect->addresses()->save($address);
+
+        if (! $result) {
+            return back()->withErrors('Please contact admin to resolve the problem.');
+        }
 
         Inertia::flash('success', 'Address created successfully.');
 
-        return to_route('architects.edit', $architect);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Architect $architect)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Architect $architect)
-    {
-        //
+        return back();
     }
 
     /**
@@ -92,8 +81,19 @@ class ArchitectAddressController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Architect $architect)
+    public function destroy(Architect $architect, Address $address): RedirectResponse
     {
-        //
+        Gate::authorize('update', $architect);
+        $result = $address->delete();
+
+        if ($result) {
+            Inertia::flash('success', 'Address deleted!');
+
+            return back();
+        } else {
+            Inertia::flash('error', 'Something went wrong, please try again.');
+
+            return back();
+        }
     }
 }

@@ -5,8 +5,9 @@ import { index } from '@/routes/architects/addresses';
 import { Architect } from '@/types/app/architect';
 import { ColumnDef } from '@tanstack/react-table';
 import { useMemo } from 'react';
-import { AddressDialog } from './address-dialog';
 import { AddAddressButton } from './add-address-button';
+import { AddressDeleteDialog } from './address-delete-dialog';
+import { AddressDialog } from './address-dialog';
 
 export function AddressTable({ architect }: { architect: Architect }) {
     const qKey = useMemo(
@@ -113,6 +114,21 @@ export function AddressTable({ architect }: { architect: Architect }) {
                 enableHiding: false,
                 meta: 'Details',
             },
+            {
+                accessorKey: 'delete',
+                header: () => null,
+                cell: ({ row }) => {
+                    const addressId = row.original.id;
+                    return (
+                        <AddressDeleteDialog
+                            architectId={architect.id}
+                            addressId={addressId}
+                            qKey={[endpoint, ...qKey]}
+                            isInTable={true}
+                        />
+                    );
+                },
+            },
         ],
         [architect.id, qKey, endpoint],
     );
@@ -124,7 +140,10 @@ export function AddressTable({ architect }: { architect: Architect }) {
 
     return (
         <div className="relative h-full flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 p-4 md:min-h-min dark:border-sidebar-border">
-            <AddAddressButton architectId={architect.id} qKey={[endpoint, ...qKey]}/>
+            <AddAddressButton
+                architectId={architect.id}
+                qKey={[endpoint, ...qKey]}
+            />
             <div className="flex flex-1 flex-col gap-4 p-2">
                 <div className="flex flex-col gap-1">
                     <h2 className="font-medium">Addresses</h2>

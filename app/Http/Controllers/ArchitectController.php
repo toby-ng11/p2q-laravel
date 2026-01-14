@@ -58,7 +58,11 @@ class ArchitectController extends Controller implements HasMiddleware
     {
         $validated = $request->validated();
         $architect = new Architect($validated);
-        $architect->save();
+        $result = $architect->save();
+
+        if (! $result) {
+            return back()->withErrors('Please contact admin to resolve the problem.');
+        }
 
         Inertia::flash('success', 'Architect created successfully.');
 

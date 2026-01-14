@@ -25,6 +25,7 @@ import { Form } from '@inertiajs/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import countryList from 'react-select-country-list';
+import { AddressDeleteDialog } from './address-delete-dialog';
 
 export function AddressDialog({
     architectId,
@@ -169,7 +170,8 @@ export function AddressDialog({
                                     ></Input>
                                 </div>
                             </FormLayout>
-                            <DialogFooter>
+                            <DialogFooter className="justify-between">
+                                <AddressDeleteDialog architectId={architectId} addressId={data.id} qKey={qKey} />
                                 <DialogClose asChild>
                                     <Button type="button" variant="outline">
                                         Cancel

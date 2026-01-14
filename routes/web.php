@@ -22,11 +22,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resources([
         'architects' => ArchitectController::class,
-        'architects.addresses' => ArchitectAddressController::class,
     ]);
 
     Route::apiResources([
         'architect-type' => ArchitectTypeController::class,
+        'architects.addresses' => ArchitectAddressController::class,
     ]);
 
     Route::get('architect-reps', [ArchitectRepController::class, 'index'])->name('architect-reps.index');

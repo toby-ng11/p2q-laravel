@@ -13,7 +13,7 @@ class ArchitectTypeController extends Controller
      */
     public function index(): JsonResponse
     {
-        $architectType = ArchitectType::orderBy('architect_type_desc')->get();
+        $architectType = ArchitectType::query()->orderBy('architect_type_desc')->get();
         return response()->json($architectType->toArray());
     }
 

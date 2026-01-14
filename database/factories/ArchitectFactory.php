@@ -27,9 +27,24 @@ class ArchitectFactory extends Factory
             'architect_name' => fake()->unique()->company(),
             'architect_rep_id' =>
             User::where('user_role_id', '>=', UserRole::ARCHREP)->inRandomOrder()->first()->id ??
-            User::factory()->state(['user_role_id' => UserRole::ARCHREP]),
+                User::factory()->state(['user_role_id' => UserRole::ARCHREP]),
             'architect_type_id' => ArchitectType::inRandomOrder()->first()->id,
             'class_id' => fake()->randomElement(['A', 'B', 'C', 'D', 'E']),
         ];
+    }
+
+    /**
+     * Configure the model factory.
+     */
+    #[\Override]
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Architect $architect) {
+            $architect->addresses()->createMany(
+                Address::factory()->count(3)->make(
+                    ['name' => $architect->architect_name]
+                )->toArray()
+            );
+        });
     }
 }
