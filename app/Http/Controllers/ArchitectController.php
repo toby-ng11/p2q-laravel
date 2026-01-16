@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware\EnsureRequestIsJson;
 use App\Http\Requests\StoreArchitectRequest;
 use App\Http\Requests\UpdateArchitectRequest;
 use App\Models\Architect;
 use App\Services\ArchitectService;
 use Exception;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Gate;
@@ -30,13 +31,14 @@ class ArchitectController extends Controller implements HasMiddleware
     {
         return [
             new Middleware(HandlePrecognitiveRequests::class, only: ['store']),
+            new Middleware(EnsureRequestIsJson::class, only: ['index']),
         ];
     }
 
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): ResourceCollection
     {
         $user = $request->user();
         $userId = $request->input('user_id', null);

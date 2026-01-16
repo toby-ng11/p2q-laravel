@@ -57,10 +57,11 @@ export function AddressDialog({
             </DialogTrigger>
             <DialogContent className="md:min-w-2xl">
                 <Form
-                    action={update({
+                    {...update.form({
                         architect: architectId,
                         address: data.id,
                     })}
+                    options={{ preserveScroll: true }}
                     onSuccess={handleSuccess}
                     resetOnSuccess
                 >
@@ -150,6 +151,26 @@ export function AddressDialog({
                                     </Select>
                                 </div>
                                 <div className="grid gap-2">
+                                    <Label htmlFor="email_address">Email</Label>
+                                    <Input
+                                        id="email_address"
+                                        type="text"
+                                        name="email_address"
+                                        defaultValue={data.email_address}
+                                    ></Input>
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="phone_number">
+                                        Phone Number
+                                    </Label>
+                                    <Input
+                                        id="phone_number"
+                                        type="text"
+                                        name="central_phone_number"
+                                        defaultValue={data.central_phone_number}
+                                    ></Input>
+                                </div>
+                                <div className="grid gap-2">
                                     <Label htmlFor="address_name">
                                         Address Nickname
                                     </Label>
@@ -171,7 +192,11 @@ export function AddressDialog({
                                 </div>
                             </FormLayout>
                             <DialogFooter className="justify-between">
-                                <AddressDeleteDialog architectId={architectId} addressId={data.id} qKey={qKey} />
+                                <AddressDeleteDialog
+                                    architectId={architectId}
+                                    addressId={data.id}
+                                    qKey={qKey}
+                                />
                                 <DialogClose asChild>
                                     <Button type="button" variant="outline">
                                         Cancel

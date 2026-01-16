@@ -38,6 +38,13 @@ class Architect extends Model
     ];
 
     /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = ['architectType', 'architectRep'];
+
+    /**
      * Perform any actions required after the model boots.
      */
     #[\Override]

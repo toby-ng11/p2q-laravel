@@ -81,7 +81,11 @@ export function AddressTable({ architect }: { architect: Architect }) {
                         },
                         { id: 'country', value: data.phys_country },
                         { id: 'phone', value: data.central_phone_number },
-                        { id: 'email', value: data.email_address },
+                        {
+                            id: 'email',
+                            value: data.email_address,
+                            isEmail: true,
+                        },
                         { id: 'url', value: data.url, isLink: true },
                     ].filter((line) => line.value);
 
@@ -89,21 +93,34 @@ export function AddressTable({ architect }: { architect: Architect }) {
                         <>
                             {lines.map((line) => (
                                 <p key={line.id}>
-                                    {line.isLink ? (
+                                    {line.isEmail ? (
                                         <a
-                                            href={
-                                                line.value.startsWith('http')
-                                                    ? line.value
-                                                    : `https://${line.value}`
-                                            }
-                                            target="_blank"
-                                            rel="noopener noreferrer"
+                                            href={'mailto:' + line.value}
                                             className="text-blue-500 hover:underline"
                                         >
                                             {line.value}
                                         </a>
                                     ) : (
-                                        line.value
+                                        <>
+                                            {line.isLink ? (
+                                                <a
+                                                    href={
+                                                        line.value.startsWith(
+                                                            'http',
+                                                        )
+                                                            ? line.value
+                                                            : `https://${line.value}`
+                                                    }
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-blue-500 hover:underline"
+                                                >
+                                                    {line.value}
+                                                </a>
+                                            ) : (
+                                                line.value
+                                            )}
+                                        </>
                                     )}
                                 </p>
                             ))}
@@ -128,6 +145,7 @@ export function AddressTable({ architect }: { architect: Architect }) {
                         />
                     );
                 },
+                enableHiding: false,
             },
         ],
         [architect.id, qKey, endpoint],

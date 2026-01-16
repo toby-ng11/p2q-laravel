@@ -48,7 +48,7 @@ export function ArchitectEditForm({ architect }: { architect: Architect }) {
         architectTypeData.isLoading || ownArchitectRepData.isLoading;
 
     return (
-        <Form {...update.form(architect.id)}>
+        <Form {...update.form(architect.id)} options={{ preserveScroll: true }}>
             {({ processing, errors }) => (
                 <FieldGroup>
                     <FieldSet>

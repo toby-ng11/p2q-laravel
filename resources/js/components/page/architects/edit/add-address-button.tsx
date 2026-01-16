@@ -45,18 +45,16 @@ export function AddAddressButton({
         <div className="absolute top-4 right-4 z-10">
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <Button
-                        variant="outline"
-                        size="icon-sm"
-                    >
+                    <Button variant="outline" size="icon-sm">
                         <Plus />
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="md:min-w-2xl">
                     <Form
-                        action={store({
+                        {...store.form({
                             architect: architectId,
                         })}
+                        options={{ preserveScroll: true }}
                         onSuccess={handleSuccess}
                         resetOnSuccess
                     >
@@ -138,6 +136,26 @@ export function AddAddressButton({
                                                 ))}
                                             </SelectContent>
                                         </Select>
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="email_address">
+                                            Email
+                                        </Label>
+                                        <Input
+                                            id="email_address"
+                                            type="text"
+                                            name="email_address"
+                                        ></Input>
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="phone_number">
+                                            Phone Number
+                                        </Label>
+                                        <Input
+                                            id="phone_number"
+                                            type="text"
+                                            name="central_phone_number"
+                                        ></Input>
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="address_name">

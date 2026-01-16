@@ -10,23 +10,23 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { Spinner } from '@/components/ui/spinner';
-import { destroy } from '@/routes/architects/addresses';
+import { destroy } from '@/routes/architects';
 import { Form } from '@inertiajs/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-export function AddressDeleteDialog({
-    architectId,
-    addressId,
-    qKey,
-    isInTable = false,
-}: {
-    architectId: number;
-    addressId: number;
-    qKey: (string | number)[];
+interface ArchitectDeleteButtonProps {
     isInTable?: boolean;
-}) {
+    architectId: number;
+    qKey: (string | number)[];
+}
+
+export function ArchitectDeleteButton({
+    isInTable = false,
+    architectId,
+    qKey,
+}: ArchitectDeleteButtonProps) {
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
 
@@ -53,13 +53,12 @@ export function AddressDeleteDialog({
                     <DialogTitle>Are you sure?</DialogTitle>
                     <DialogDescription>
                         This action cannot be undone. This will permanently
-                        delete the address.
+                        delete the architect.
                     </DialogDescription>
                 </DialogHeader>
                 <Form
                     {...destroy.form({
                         architect: architectId,
-                        address: addressId,
                     })}
                     options={{ preserveScroll: true }}
                     onSuccess={handleSuccess}

@@ -2,29 +2,30 @@
 
 namespace App\Services;
 
+use App\Http\Resources\ArchitectResource;
 use App\Models\Architect;
 use App\Models\User;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class ArchitectService
 {
-    public function fetchArchitects(?User $user = null, ?string $userId = null): JsonResponse
+    public function fetchArchitects(?User $user = null, ?string $userId = null): ResourceCollection
     {
         if ($user && $userId !== null) {
             $architects = Architect::where('architect_rep_id', $userId)
-                ->with(['architectType:id,architect_type_desc', 'architectRep:id,name'])
-                ->get();
+                ->get()
+                ->toResourceCollection();
 
-            return response()->json($architects->toArray());
+            return $architects;
         }
 
         if ($user && $user->isAdministrator()) {
-            $architects = Architect::with(['architectType:id,architect_type_desc', 'architectRep:id,name'])
-                ->get();
+            $architects = Architect::all()
+                ->toResourceCollection();
 
-            return response()->json($architects->toArray());
+            return $architects;
         }
 
-        return response()->json(['User ID is required.']);
+        return ArchitectResource::collection(['User is not logged in.']);
     }
 }

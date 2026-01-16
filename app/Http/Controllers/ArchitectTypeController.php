@@ -3,18 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\ArchitectType;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class ArchitectTypeController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(): ResourceCollection
     {
-        $architectType = ArchitectType::query()->orderBy('architect_type_desc')->get();
-        return response()->json($architectType->toArray());
+        return ArchitectType::query()->orderBy('architect_type_desc')->get()->toResourceCollection();
     }
 
     /**

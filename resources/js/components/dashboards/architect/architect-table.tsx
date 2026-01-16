@@ -8,6 +8,7 @@ import userPreference from '@/routes/user-preference';
 import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { useMemo } from 'react';
+import { ArchitectDeleteButton } from './architect-delete-button';
 
 interface ArchitectTable {
     id: number;
@@ -37,7 +38,7 @@ export default function ArchitectTable({
 
     const getUrl = userPreference.show.url(prefKey);
     const postUrl = userPreference.update.url(prefKey);
-    const qKey = ['architect-dashboard', 'architect-table'];
+    const qKey = useMemo(() => ['architect-dashboard', 'architect-table'], []);
 
     const {
         data: architectData = [],
@@ -145,8 +146,22 @@ export default function ArchitectTable({
                 sortingFn: 'datetime',
                 meta: 'Created At',
             },
+            {
+                accessorKey: 'delete',
+                header: () => null,
+                cell: ({ row }) => {
+                    return (
+                        <ArchitectDeleteButton
+                            architectId={row.original.id}
+                            qKey={[endpoint, ...qKey]}
+                            isInTable={true}
+                        />
+                    );
+                },
+                enableHiding: false,
+            },
         ],
-        [],
+        [endpoint, qKey],
     );
 
     return (
