@@ -15,9 +15,12 @@ class ArchitectTypeResource extends JsonResource
     #[\Override]
     public function toArray(Request $request): array
     {
+        /** @var \App\Models\ArchitectType $architectType */
+        $architectType = $this->resource;
+
         return [
-            'id' => $this->id,
-            'architect_type_desc' => $this->architect_type_desc,
+            'id' => $architectType->id,
+            'architect_type_desc' => $architectType->architect_type_desc,
         ];
     }
 }

@@ -191,4 +191,27 @@ class ArchitectTest extends TestCase
             ]);
         }
     }
+
+    public function test_address_cannot_be_modified_if_doesnt_belong_to_architect()
+    {
+        $user = $this->makeUserWithRole(UserRole::ARCHREP);
+        /** @var Architect $architect1 */
+        $architect1 = Architect::factory()->create();
+        /** @var Architect $architect2 */
+        $architect2 = Architect::factory()->create();
+        $architect2Id = $architect2->id;
+
+        $addressOfArchitect1 = $architect1->addresses()->get()->first();
+        $addressId = $addressOfArchitect1['id'];
+
+        $this->actingAs($user)
+            ->putJson("/architects/$architect2Id/addresses/$addressId", [
+                'phys_address1' => '123 Test',
+            ])
+            ->assertNotFound();
+
+        $this->actingAs($user)
+            ->delete("/architects/$architect2Id/addresses/$addressId")
+            ->assertNotFound();
+    }
 }

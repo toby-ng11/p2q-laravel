@@ -1,5 +1,6 @@
 import { AddressTable } from '@/components/page/architects/edit/address-table';
 import { ArchitectEditForm } from '@/components/page/architects/edit/architect-form';
+import { SpecifierTable } from '@/components/page/architects/edit/specifier-table';
 import AppLayout from '@/layouts/app-layout';
 import { edit } from '@/routes/architects';
 import { architect as architectDashboardUrl } from '@/routes/dashboard';
@@ -34,8 +35,8 @@ export default function ArchitectEdit() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-                    <AddressTable architect={architect}/>
-                    <div className="relative overflow-hidden rounded-xl border p-4"></div>
+                    <AddressTable architect={architect} />
+                    <SpecifierTable architect={architect} />
                 </div>
             </div>
         </AppLayout>

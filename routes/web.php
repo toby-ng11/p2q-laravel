@@ -21,14 +21,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('preferences/{key}', [UserPreferenceController::class, 'show'])->name('user-preference.show');
     Route::post('preferences/{key}', [UserPreferenceController::class, 'update'])->name('user-preference.update');
 
+    Route::scopeBindings()->group(function () {
+        Route::resources([
+            'architects.addresses' => ArchitectAddressController::class,
+            'architects.specifiers' => ArchitectSpecifierController::class,
+        ]);
+    });
+
     Route::resources([
         'architects' => ArchitectController::class,
     ]);
 
     Route::apiResources([
         'architect-type' => ArchitectTypeController::class,
-        'architects.addresses' => ArchitectAddressController::class,
-        'architects.specifiers' => ArchitectSpecifierController::class,
     ]);
 
     Route::get('architect-reps', [ArchitectRepController::class, 'index'])->name('architect-reps.index');

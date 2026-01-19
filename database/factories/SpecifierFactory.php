@@ -12,24 +12,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class SpecifierFactory extends Factory
 {
     /**
-     * Configure the model factory.
-     */
-    #[\Override]
-    public function configure(): static
-    {
-        return $this->afterCreating(function (Specifier $specifier) {
-            $specifier->address()->create(
-                Address::factory()->count(1)->make(
-                    [
-                        'name' => $specifier->first_name . " " . $specifier->last_name,
-                        'email_address' => fake()->email(),
-                    ]
-                )->toArray()
-            );
-        });
-    }
-
-    /**
      * Define the model's default state.
      *
      * @return array<string, mixed>

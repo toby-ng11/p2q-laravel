@@ -7,18 +7,17 @@ use App\Http\Requests\StoreAddressRequest;
 use App\Http\Requests\UpdateAddressRequest;
 use App\Models\Address;
 use App\Models\Architect;
-use Illuminate\Http\JsonResponse;
+use App\Services\AddressService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Log;
-use Inertia\Inertia;
 
 class ArchitectAddressController extends Controller implements HasMiddleware
 {
+    public function __construct(protected AddressService $addressService) {}
+
     /**
      * Get the middleware that should be assigned to the controller.
      */
@@ -52,16 +51,7 @@ class ArchitectAddressController extends Controller implements HasMiddleware
     public function store(StoreAddressRequest $request, Architect $architect): RedirectResponse
     {
         $validated = $request->validated();
-        $address = new Address($validated);
-        $result = $architect->addresses()->save($address);
-
-        if (! $result) {
-            return back()->withErrors('Please contact admin to resolve the problem.');
-        }
-
-        Inertia::flash('success', 'Address created successfully.');
-
-        return back();
+        return $this->addressService->storeArchitectAddress($architect, $validated);
     }
 
     /**
@@ -70,25 +60,7 @@ class ArchitectAddressController extends Controller implements HasMiddleware
     public function update(UpdateAddressRequest $request, Architect $architect, Address $address): RedirectResponse
     {
         $validated = $request->validated();
-        $user = $request->user();
-
-        if ($user) {
-            $result = $address->update($validated);
-
-            if ($result) {
-                Inertia::flash('success', 'Address saved!');
-
-                return back();
-            } else {
-                Inertia::flash('error', 'Something went wrong, please try again.');
-
-                return back();
-            }
-        }
-
-        Inertia::flash('error', 'User is not logged in.');
-
-        return back();
+        return $this->addressService->updateArchitectAddress($architect, $address, $validated);
     }
 
     /**
@@ -97,16 +69,6 @@ class ArchitectAddressController extends Controller implements HasMiddleware
     public function destroy(Architect $architect, Address $address): RedirectResponse
     {
         Gate::authorize('update', $architect);
-        $result = $address->delete();
-
-        if ($result) {
-            Inertia::flash('success', 'Address deleted!');
-
-            return back();
-        } else {
-            Inertia::flash('error', 'Something went wrong, please try again.');
-
-            return back();
-        }
+        return $this->addressService->deleteAddress($architect, $address);
     }
 }

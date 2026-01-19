@@ -1,4 +1,6 @@
 import { DataTable } from '@/components/data-table';
+import { FormatEmail } from '@/components/format-email';
+import { FormatLink } from '@/components/format-link';
 import { DataTableColumnHeader } from '@/components/table-header';
 import { useTanStackQuery } from '@/hooks/use-tanstack-query';
 import { index } from '@/routes/architects/addresses';
@@ -7,7 +9,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { useMemo } from 'react';
 import { AddAddressButton } from './add-address-button';
 import { AddressDeleteDialog } from './address-delete-dialog';
-import { AddressDialog } from './address-dialog';
+import { EditArchitectAddressButton } from './edit-architect-address-button';
 
 export function AddressTable({ architect }: { architect: Architect }) {
     const qKey = useMemo(
@@ -30,7 +32,7 @@ export function AddressTable({ architect }: { architect: Architect }) {
                 cell: ({ row }) => {
                     const data = row.original;
                     return (
-                        <AddressDialog
+                        <EditArchitectAddressButton
                             architectId={architect.id}
                             qKey={[endpoint, ...qKey]}
                             data={data}
@@ -94,29 +96,11 @@ export function AddressTable({ architect }: { architect: Architect }) {
                             {lines.map((line) => (
                                 <p key={line.id}>
                                     {line.isEmail ? (
-                                        <a
-                                            href={'mailto:' + line.value}
-                                            className="text-blue-500 hover:underline"
-                                        >
-                                            {line.value}
-                                        </a>
+                                        <FormatEmail email={line.value} />
                                     ) : (
                                         <>
                                             {line.isLink ? (
-                                                <a
-                                                    href={
-                                                        line.value.startsWith(
-                                                            'http',
-                                                        )
-                                                            ? line.value
-                                                            : `https://${line.value}`
-                                                    }
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="text-blue-500 hover:underline"
-                                                >
-                                                    {line.value}
-                                                </a>
+                                                <FormatLink link={line.value} />
                                             ) : (
                                                 line.value
                                             )}

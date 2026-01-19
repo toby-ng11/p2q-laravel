@@ -15,13 +15,16 @@ class ArchitectResource extends JsonResource
     #[\Override]
     public function toArray(Request $request): array
     {
+        /** @var \App\Models\Architect $architect */
+        $architect = $this->resource;
+
         return [
-            'id' => $this->id,
-            'architect_name' => $this->architect_name,
+            'id' => $architect->id,
+            'architect_name' => $architect->architect_name,
             'architect_type' => new ArchitectTypeResource($this->whenLoaded('architectType')),
             'architect_rep' => new UserResource($this->whenLoaded('architectRep')),
-            'class_id' => $this->class_id,
-            'created_at' => $this->created_at,
+            'class_id' => $architect->class_id,
+            'created_at' => $architect->created_at,
         ];
     }
 }

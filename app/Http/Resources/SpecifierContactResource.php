@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserResource extends JsonResource
+class SpecifierContactResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,12 +15,12 @@ class UserResource extends JsonResource
     #[\Override]
     public function toArray(Request $request): array
     {
-        /** @var \App\Models\User $user */
-        $user = $this->resource;
+        /** @var \App\Models\Address $address */
+        $address = $this->resource;
 
         return [
-            'id' => $user->id,
-            'name' => $user->name,
+            'central_phone_number' => $address->central_phone_number,
+            'email_address' => $address->email_address,
         ];
     }
 }

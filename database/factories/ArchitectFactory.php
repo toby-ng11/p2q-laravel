@@ -30,9 +30,16 @@ class ArchitectFactory extends Factory
                     ]
                 )->toArray()
             );
-            $architect->specifiers()->createMany(
-                Specifier::factory()->count(2)->make()->toArray()
-            );
+
+            Specifier::factory()->count(2)
+                ->for($architect)
+                ->hasAddress(function (array $attributes, Specifier $specifier) {
+                    return [
+                        'name' => $specifier->first_name . " " . $specifier->last_name,
+                        'email_address' => fake()->email(),
+                    ];
+                })
+                ->create();
         });
     }
 

@@ -27,7 +27,7 @@ import { useMemo, useState } from 'react';
 import countryList from 'react-select-country-list';
 import { AddressDeleteDialog } from './address-delete-dialog';
 
-export function AddressDialog({
+export function EditArchitectAddressButton({
     architectId,
     data,
     qKey,

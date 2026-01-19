@@ -47,16 +47,16 @@ class UpdateAddressRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'max:255',
-            'phys_address1' => 'required|max:255',
-            'phys_address2' => 'nullable|max:255',
-            'phys_city' => 'nullable|max:255',
-            'phys_state' => 'nullable|max:255',
-            'phys_postal_code' => 'nullable|max:255',
-            'phys_country' => 'nullable|max:255',
-            'central_phone_number' => 'nullable|max:255',
-            'email_address' => 'nullable|max:255',
-            'url' => 'nullable|max:255',
+            'name' => 'string|max:255',
+            'phys_address1' => 'required|string|max:255',
+            'phys_address2' => 'nullable|string|max:255',
+            'phys_city' => 'nullable|string|max:255',
+            'phys_state' => 'nullable|string|max:255',
+            'phys_postal_code' => 'nullable|string|max:255',
+            'phys_country' => 'nullable|string|max:255',
+            'central_phone_number' => 'nullable|string|max:255',
+            'email_address' => 'nullable|email|max:255',
+            'url' => 'nullable|string|max:255',
         ];
     }
 }
