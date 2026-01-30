@@ -33,8 +33,7 @@ class ArchitectService
         }
     }
 
-    public function deleteArchitect(Architect $architect): bool
-    {
+    public function deleteArchitect(Architect $architect): bool {
         try {
             $architect->delete();
             return true;

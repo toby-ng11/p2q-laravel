@@ -38,6 +38,18 @@ class Specifier extends Model
      */
     protected $with = ['address'];
 
+    /**
+     * Perform any actions required after the model boots.
+     */
+    #[\Override]
+    protected static function booted()
+    {
+        static::deleting(function (Specifier $specifier) {
+            // This ensures addresses are deleted when the architect is
+            $specifier->address()->delete();
+        });
+    }
+
     public function address(): MorphOne
     {
         return $this->morphOne(Address::class, 'addressable');

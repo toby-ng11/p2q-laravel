@@ -52,6 +52,9 @@ class Architect extends Model
         static::deleting(function (Architect $architect) {
             // This ensures addresses are deleted when the architect is
             $architect->addresses()->delete();
+            $architect->specifiers->each(function ($specifier) {
+                $specifier->delete();
+            });
         });
     }
 

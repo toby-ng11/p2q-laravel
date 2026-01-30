@@ -76,10 +76,7 @@ class SpecifierService
     public function deleteSpecifier(Specifier $specifier): bool
     {
         try {
-            DB::transaction(function () use ($specifier) {
-                $specifier->address()->delete();
-                $specifier->delete();
-            });
+            $specifier->delete();
             return true;
         } catch (Exception $e) {
             Log::error("Failed to delete specifier ID {$specifier->id}: " . $e->getMessage());

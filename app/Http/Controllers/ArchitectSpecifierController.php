@@ -42,9 +42,9 @@ class ArchitectSpecifierController extends Controller implements HasMiddleware
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Architect $architect): RedirectResponse
     {
-        //
+        return to_route('architects.edit', $architect);
     }
 
     /**
@@ -67,17 +67,17 @@ class ArchitectSpecifierController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(Architect $architect)
+    public function show(Architect $architect, Specifier $specifier): RedirectResponse
     {
-        //
+        return to_route('architects.edit', $architect);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Architect $architect)
+    public function edit(Architect $architect, Specifier $specifier): RedirectResponse
     {
-        //
+        return to_route('architects.edit', $architect);
     }
 
     /**
