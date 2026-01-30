@@ -17,20 +17,21 @@ import { update } from '@/routes/architects/specifiers';
 import { Form } from '@inertiajs/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
+import { SpecifierDeleteButton } from './specifier-delete-button';
 
-interface EditSpecifierButtonProps {
+interface SpecifierEditButtonProps {
     data: Specifier;
     architectId: number;
     endpoint: string;
     qKey: (string | number)[];
 }
 
-export function EditArchitectSpecifierButton({
+export function SpecifierEditButton({
     data,
     architectId,
     endpoint,
     qKey,
-}: EditSpecifierButtonProps) {
+}: SpecifierEditButtonProps) {
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
 
@@ -88,7 +89,6 @@ export function EditArchitectSpecifierButton({
                                         type="text"
                                         name="last_name"
                                         defaultValue={data.last_name}
-                                        required
                                     ></Input>
                                 </div>
                                 <div className="grid gap-2">
@@ -98,7 +98,6 @@ export function EditArchitectSpecifierButton({
                                         type="text"
                                         name="job_title"
                                         defaultValue={data.job_title}
-                                        required
                                     ></Input>
                                 </div>
                                 <div className="grid gap-2">
@@ -112,7 +111,6 @@ export function EditArchitectSpecifierButton({
                                         defaultValue={
                                             data.contact?.central_phone_number
                                         }
-                                        required
                                     ></Input>
                                 </div>
                                 <div className="grid gap-2">
@@ -124,7 +122,6 @@ export function EditArchitectSpecifierButton({
                                         defaultValue={
                                             data.contact?.email_address
                                         }
-                                        required
                                     ></Input>
                                 </div>
                             </FormLayout>
@@ -134,6 +131,12 @@ export function EditArchitectSpecifierButton({
                                         Cancel
                                     </Button>
                                 </DialogClose>
+                                <SpecifierDeleteButton
+                                    architectId={architectId}
+                                    specifierId={data.id}
+                                    endpoint={endpoint}
+                                    qKey={qKey}
+                                />
                                 <Button type="submit" disabled={processing}>
                                     Save
                                     {processing && <Spinner />}

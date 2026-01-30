@@ -8,6 +8,21 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
+/**
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property string|null $class_id
+ * @property int $architect_type_id
+ * @property int|null $architect_rep_id
+ * @property string $architect_name
+ * @property int $id
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Address> $addresses
+ * @property-read int|null $addresses_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Specifier> $specifiers
+ * @property-read int|null $specifiers_count
+ * @property-read \App\Models\ArchitectType $architectType
+ * @property-read \App\Models\User $architectRep
+ */
 class Architect extends Model
 {
     /** @use HasFactory<\Database\Factories\ArchitectFactory> */

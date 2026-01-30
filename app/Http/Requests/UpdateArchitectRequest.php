@@ -37,6 +37,7 @@ class UpdateArchitectRequest extends FormRequest
             'architect_name' => [
                 'required',
                 'max:255',
+                'string',
                 Rule::unique('architects')->ignore($this->route('architect')),
             ],
             'architect_rep_id' => [

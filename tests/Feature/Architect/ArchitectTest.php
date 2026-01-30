@@ -31,8 +31,7 @@ class ArchitectTest extends TestCase
                 'architect_type_id' => 1,
                 'class_id'          => 'A',
             ])
-            ->assertStatus(422)
-            ->assertJsonValidationErrors(['architect_rep_id']);
+            ->assertInvalid(['architect_rep_id']);
     }
 
     public function test_architect_can_be_created_if_rep_role_is_manager_or_above()
@@ -127,8 +126,7 @@ class ArchitectTest extends TestCase
             ->postJson("/architects/$architectId/addresses", [
                 'phys_address1' => '123 Test',
             ])
-            ->assertValid()
-            ->assertRedirectBack();
+            ->assertValid();
 
         $this->assertDatabaseHas('addresses', ['phys_address1' => '123 Test']);
     }
@@ -145,8 +143,7 @@ class ArchitectTest extends TestCase
             ->postJson("/architects/$architectId/addresses", [
                 'phys_address1' => '123 Test',
             ])
-            ->assertValid()
-            ->assertRedirectBack();
+            ->assertValid();
 
         $this->assertDatabaseHas('addresses', ['phys_address1' => '123 Test']);
     }
@@ -194,7 +191,7 @@ class ArchitectTest extends TestCase
 
     public function test_address_cannot_be_modified_if_doesnt_belong_to_architect()
     {
-        $user = $this->makeUserWithRole(UserRole::ARCHREP);
+        $user = $this->makeUserWithRole(UserRole::ADMIN);
         /** @var Architect $architect1 */
         $architect1 = Architect::factory()->create();
         /** @var Architect $architect2 */
@@ -212,6 +209,29 @@ class ArchitectTest extends TestCase
 
         $this->actingAs($user)
             ->delete("/architects/$architect2Id/addresses/$addressId")
+            ->assertNotFound();
+    }
+
+    public function test_specifier_cannot_be_modified_if_doesnt_belong_to_architect()
+    {
+        $user = $this->makeUserWithRole(UserRole::ADMIN);
+        /** @var Architect $architect1 */
+        $architect1 = Architect::factory()->create();
+        /** @var Architect $architect2 */
+        $architect2 = Architect::factory()->create();
+        $architect2Id = $architect2->id;
+
+        $specifierOfArchitect1 = $architect1->specifiers()->get()->first();
+        $specifierId = $specifierOfArchitect1['id'];
+
+        $this->actingAs($user)
+            ->putJson("/architects/$architect2Id/speicifiers/$specifierId", [
+                'first_name' => 'Test',
+            ])
+            ->assertNotFound();
+
+        $this->actingAs($user)
+            ->delete("/architects/$architect2Id/speicifiers/$specifierId")
             ->assertNotFound();
     }
 }

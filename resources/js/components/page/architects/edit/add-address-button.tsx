@@ -27,18 +27,22 @@ import { Plus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import countryList from 'react-select-country-list';
 
+interface AddAddressButtonProps {
+    architectId: number;
+    endpoint: string;
+    qKey: (string | number)[];
+}
+
 export function AddAddressButton({
     architectId,
+    endpoint,
     qKey,
-}: {
-    architectId: number;
-    qKey: (string | number)[];
-}) {
+}: AddAddressButtonProps) {
     const queryClient = useQueryClient();
     const countries = useMemo(() => countryList().getData(), []);
     const [open, setOpen] = useState(false);
     const handleSuccess = () => {
-        queryClient.invalidateQueries({ queryKey: qKey });
+        queryClient.invalidateQueries({ queryKey: [endpoint, ...qKey] });
         setOpen(false);
     };
     return (

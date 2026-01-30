@@ -4,19 +4,18 @@ import { FormatLink } from '@/components/format-link';
 import { DataTableColumnHeader } from '@/components/table-header';
 import { useTanStackQuery } from '@/hooks/use-tanstack-query';
 import { index } from '@/routes/architects/addresses';
-import { Architect } from '@/types/app/architect';
 import { ColumnDef } from '@tanstack/react-table';
 import { useMemo } from 'react';
 import { AddAddressButton } from './add-address-button';
-import { AddressDeleteDialog } from './address-delete-dialog';
-import { EditArchitectAddressButton } from './edit-architect-address-button';
+import { AddressDeleteButton } from './address-delete-button';
+import { AddressEditButton } from './address-edit-button';
 
-export function AddressTable({ architect }: { architect: Architect }) {
+export function AddressTable({ architectId }: { architectId: number }) {
     const qKey = useMemo(
-        () => ['architect-address', architect.id],
-        [architect.id],
+        () => ['architect-address', architectId],
+        [architectId],
     );
-    const endpoint = index(architect.id).url;
+    const endpoint = index(architectId).url;
     const { data: addressData = [], isFetching } = useTanStackQuery<Address[]>(
         endpoint,
         qKey,
@@ -32,9 +31,10 @@ export function AddressTable({ architect }: { architect: Architect }) {
                 cell: ({ row }) => {
                     const data = row.original;
                     return (
-                        <EditArchitectAddressButton
-                            architectId={architect.id}
-                            qKey={[endpoint, ...qKey]}
+                        <AddressEditButton
+                            architectId={architectId}
+                            endpoint={endpoint}
+                            qKey={qKey}
                             data={data}
                         />
                     );
@@ -121,10 +121,11 @@ export function AddressTable({ architect }: { architect: Architect }) {
                 cell: ({ row }) => {
                     const addressId = row.original.id;
                     return (
-                        <AddressDeleteDialog
-                            architectId={architect.id}
+                        <AddressDeleteButton
+                            architectId={architectId}
                             addressId={addressId}
-                            qKey={[endpoint, ...qKey]}
+                            endpoint={endpoint}
+                            qKey={qKey}
                             isInTable={true}
                         />
                     );
@@ -132,7 +133,7 @@ export function AddressTable({ architect }: { architect: Architect }) {
                 enableHiding: false,
             },
         ],
-        [architect.id, qKey, endpoint],
+        [architectId, qKey, endpoint],
     );
 
     const tableSkeletonProps = {
@@ -143,8 +144,9 @@ export function AddressTable({ architect }: { architect: Architect }) {
     return (
         <div className="relative h-full flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 p-4 md:min-h-min dark:border-sidebar-border">
             <AddAddressButton
-                architectId={architect.id}
-                qKey={[endpoint, ...qKey]}
+                architectId={architectId}
+                endpoint={endpoint}
+                qKey={qKey}
             />
             <div className="flex flex-1 flex-col gap-4 p-2">
                 <div className="flex flex-col gap-1">

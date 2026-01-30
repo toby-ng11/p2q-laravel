@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateSpecifierRequest extends FormRequest
+class StoreSpecifierRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -12,10 +12,9 @@ class UpdateSpecifierRequest extends FormRequest
     public function authorize(): bool
     {
         $architect = $this->route('architect') ?? '';
-        $specifier = $this->route('specifier') ?? '';
         $user = $this->user();
 
-        if (! $architect || ! $specifier || ! $user) {
+        if (! $architect || ! $user) {
             return false;
         }
 

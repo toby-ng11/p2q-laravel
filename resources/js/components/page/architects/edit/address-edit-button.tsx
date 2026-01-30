@@ -25,23 +25,27 @@ import { Form } from '@inertiajs/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import countryList from 'react-select-country-list';
-import { AddressDeleteDialog } from './address-delete-dialog';
+import { AddressDeleteButton } from './address-delete-button';
 
-export function EditArchitectAddressButton({
-    architectId,
-    data,
-    qKey,
-}: {
+interface AddressEditButtonProps {
     architectId: number;
     data: Address;
+    endpoint: string;
     qKey: (string | number)[];
-}) {
+}
+
+export function AddressEditButton({
+    architectId,
+    data,
+    endpoint,
+    qKey,
+}: AddressEditButtonProps) {
     const queryClient = useQueryClient();
     const countries = useMemo(() => countryList().getData(), []);
     const [open, setOpen] = useState(false);
 
     const handleSuccess = () => {
-        queryClient.invalidateQueries({ queryKey: qKey });
+        queryClient.invalidateQueries({ queryKey: [endpoint, ...qKey] });
         setOpen(false);
     };
 
@@ -192,16 +196,17 @@ export function EditArchitectAddressButton({
                                 </div>
                             </FormLayout>
                             <DialogFooter className="justify-between">
-                                <AddressDeleteDialog
-                                    architectId={architectId}
-                                    addressId={data.id}
-                                    qKey={qKey}
-                                />
                                 <DialogClose asChild>
                                     <Button type="button" variant="outline">
                                         Cancel
                                     </Button>
                                 </DialogClose>
+                                <AddressDeleteButton
+                                    architectId={architectId}
+                                    addressId={data.id}
+                                    endpoint={endpoint}
+                                    qKey={qKey}
+                                />
                                 <Button type="submit" disabled={processing}>
                                     Save
                                     {processing && <Spinner />}

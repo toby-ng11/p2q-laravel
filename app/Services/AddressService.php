@@ -11,48 +11,36 @@ use Inertia\Inertia;
 
 class AddressService
 {
-    public function storeArchitectAddress(Architect $architect, array $data): RedirectResponse
+    public function storeArchitectAddress(Architect $architect, array $data): bool
     {
         try {
             $architect->addresses()->create($data);
-
-            Inertia::flash('success', 'Address created successfully.');
-            return back();
+            return true;
         } catch (Exception $e) {
             Log::error("Address creation failed for Architect {$architect->id}: " . $e->getMessage());
-
-            Inertia::flash('error', 'Could not save address. Please try again.');
-            return back();
+            return false;
         }
     }
 
-    public function updateArchitectAddress(Architect $architect, Address $address, array $data): RedirectResponse
+    public function updateArchitectAddress(Architect $architect, Address $address, array $data): bool
     {
         try {
             $address->update($data);
-
-            Inertia::flash('success', 'Address updated successfully.');
-            return back();
+            return true;
         } catch (Exception $e) {
             Log::error("Address update failed for Architect {$architect->id}: " . $e->getMessage());
-
-            Inertia::flash('error', 'Could not update address. Please try again.');
-            return back();
+            return false;
         }
     }
 
-    public function deleteAddress(Architect $architect, Address $address): RedirectResponse
+    public function deleteAddress(Architect $architect, Address $address): bool
     {
         try {
             $address->delete();
-
-            Inertia::flash('success', 'Address deleted!');
-            return back();
+            return true;
         } catch (Exception $e) {
             Log::error("Address deletion failed for Architect {$architect->id}: " . $e->getMessage());
-
-            Inertia::flash('error', 'Could not delete address. Please try again.');
-            return back();
+            return false;
         }
     }
 }

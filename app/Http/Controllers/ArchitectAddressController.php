@@ -13,6 +13,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Gate;
+use Inertia\Inertia;
 
 class ArchitectAddressController extends Controller implements HasMiddleware
 {
@@ -51,7 +52,15 @@ class ArchitectAddressController extends Controller implements HasMiddleware
     public function store(StoreAddressRequest $request, Architect $architect): RedirectResponse
     {
         $validated = $request->validated();
-        return $this->addressService->storeArchitectAddress($architect, $validated);
+        $result = $this->addressService->storeArchitectAddress($architect, $validated);
+
+        if ($result) {
+            Inertia::flash('success', 'Address created successfully.');
+            return back();
+        } else {
+            Inertia::flash('error', 'Could not save address. Please try again.');
+            return back();
+        }
     }
 
     /**
@@ -60,7 +69,15 @@ class ArchitectAddressController extends Controller implements HasMiddleware
     public function update(UpdateAddressRequest $request, Architect $architect, Address $address): RedirectResponse
     {
         $validated = $request->validated();
-        return $this->addressService->updateArchitectAddress($architect, $address, $validated);
+        $result = $this->addressService->updateArchitectAddress($architect, $address, $validated);
+
+        if ($result) {
+            Inertia::flash('success', 'Address updated successfully.');
+            return back();
+        } else {
+            Inertia::flash('error', 'Could not update address. Please try again.');
+            return back();
+        }
     }
 
     /**
@@ -69,6 +86,14 @@ class ArchitectAddressController extends Controller implements HasMiddleware
     public function destroy(Architect $architect, Address $address): RedirectResponse
     {
         Gate::authorize('update', $architect);
-        return $this->addressService->deleteAddress($architect, $address);
+        $result = $this->addressService->deleteAddress($architect, $address);
+
+        if ($result) {
+            Inertia::flash('success', 'Address deleted!');
+            return back();
+        } else {
+            Inertia::flash('error', 'Could not delete address. Please try again.');
+            return back();
+        }
     }
 }

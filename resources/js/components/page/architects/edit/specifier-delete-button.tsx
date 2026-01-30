@@ -10,28 +10,32 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { Spinner } from '@/components/ui/spinner';
-import { destroy } from '@/routes/architects/addresses';
+import { destroy } from '@/routes/architects/specifiers';
 import { Form } from '@inertiajs/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-export function AddressDeleteDialog({
-    architectId,
-    addressId,
-    qKey,
-    isInTable = false,
-}: {
+interface SpecifierDeleteButtonProps {
     architectId: number;
-    addressId: number;
+    specifierId: number;
+    endpoint: string;
     qKey: (string | number)[];
     isInTable?: boolean;
-}) {
+}
+
+export function SpecifierDeleteButton({
+    architectId,
+    specifierId,
+    endpoint,
+    qKey,
+    isInTable = false,
+}: SpecifierDeleteButtonProps) {
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
 
     const handleSuccess = () => {
-        queryClient.invalidateQueries({ queryKey: qKey });
+        queryClient.invalidateQueries({ queryKey: [endpoint, ...qKey] });
         setOpen(false);
     };
 
@@ -53,13 +57,13 @@ export function AddressDeleteDialog({
                     <DialogTitle>Are you sure?</DialogTitle>
                     <DialogDescription>
                         This action cannot be undone. This will permanently
-                        delete the address.
+                        delete the specifier.
                     </DialogDescription>
                 </DialogHeader>
                 <Form
                     {...destroy.form({
                         architect: architectId,
-                        address: addressId,
+                        specifier: specifierId,
                     })}
                     options={{ preserveScroll: true }}
                     onSuccess={handleSuccess}

@@ -60,16 +60,15 @@ class ArchitectController extends Controller implements HasMiddleware
     public function store(StoreArchitectRequest $request): RedirectResponse
     {
         $validated = $request->validated();
-        $architect = new Architect($validated);
-        $result = $architect->save();
+        $result = $this->architectService->storeArchitect($validated);
 
         if (! $result) {
-            return back()->withErrors('Please contact admin to resolve the problem.');
+            return back()->withErrors('Architect creation failed. Please try again later or contact admin to resolve the problem.');
         }
 
         Inertia::flash('success', 'Architect created successfully.');
 
-        return to_route('architects.edit', $architect);
+        return to_route('architects.edit', $result);
     }
 
     /**
@@ -103,17 +102,17 @@ class ArchitectController extends Controller implements HasMiddleware
             $validated = $data->except('architect_rep_id');
         }
 
-        $result = $architect->update($validated);
+        $result = $this->architectService->updateArchitect($architect, $validated);
 
         if ($result) {
             Inertia::flash('success', 'Architect saved!');
 
             return back();
+        } else {
+            Inertia::flash('error', 'Something went wrong, please try again.');
+
+            return back();
         }
-
-        Inertia::flash('error', 'Something went wrong, please try again.');
-
-        return back();
     }
 
     /**
@@ -122,13 +121,12 @@ class ArchitectController extends Controller implements HasMiddleware
     public function destroy(Architect $architect): RedirectResponse
     {
         Gate::authorize('delete', $architect);
-        try {
-            $architect->delete();
+        $result = $this->architectService->deleteArchitect($architect);
 
+        if ($result) {
             Inertia::flash('success', 'Architect deleted!');
             return back();
-        } catch (Exception $e) {
-            Log::error($e->getMessage());
+        } else {
             Inertia::flash('error', 'Deletion failed.');
             return back();
         }

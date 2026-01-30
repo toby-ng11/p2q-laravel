@@ -3,18 +3,18 @@ import { FormatEmail } from '@/components/format-email';
 import { DataTableColumnHeader } from '@/components/table-header';
 import { useTanStackQuery } from '@/hooks/use-tanstack-query';
 import { index } from '@/routes/architects/specifiers';
-import { Architect } from '@/types/app/architect';
 import { ColumnDef } from '@tanstack/react-table';
 import { useMemo } from 'react';
-import { AddAddressButton } from './add-address-button';
-import { EditArchitectSpecifierButton } from './edit-architect-specifier-button';
+import { AddSpecifierButton } from './add-specifier-button';
+import { SpecifierDeleteButton } from './specifier-delete-button';
+import { SpecifierEditButton } from './specifier-edit-button';
 
-export function SpecifierTable({ architect }: { architect: Architect }) {
+export function SpecifierTable({ architectId }: { architectId: number }) {
     const qKey = useMemo(
-        () => ['architect-specifier', architect.id],
-        [architect.id],
+        () => ['architect-specifier', architectId],
+        [architectId],
     );
-    const endpoint = index(architect.id).url;
+    const endpoint = index(architectId).url;
     const { data: specifierData = [], isFetching } = useTanStackQuery<
         Specifier[]
     >(endpoint, qKey);
@@ -29,9 +29,9 @@ export function SpecifierTable({ architect }: { architect: Architect }) {
                 cell: ({ row }) => {
                     const data = row.original;
                     return (
-                        <EditArchitectSpecifierButton
+                        <SpecifierEditButton
                             data={data}
-                            architectId={architect.id}
+                            architectId={architectId}
                             endpoint={endpoint}
                             qKey={qKey}
                         />
@@ -111,13 +111,21 @@ export function SpecifierTable({ architect }: { architect: Architect }) {
                 accessorKey: 'delete',
                 header: () => null,
                 cell: ({ row }) => {
-                    const addressId = row.original.id;
-                    return addressId;
+                    const specifierId = row.original.id;
+                    return (
+                        <SpecifierDeleteButton
+                            architectId={architectId}
+                            specifierId={specifierId}
+                            endpoint={endpoint}
+                            qKey={qKey}
+                            isInTable={true}
+                        />
+                    );
                 },
                 enableHiding: false,
             },
         ],
-        [architect.id, endpoint, qKey],
+        [architectId, endpoint, qKey],
     );
 
     const tableSkeletonProps = {
@@ -127,10 +135,12 @@ export function SpecifierTable({ architect }: { architect: Architect }) {
 
     return (
         <div className="relative h-full flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 p-4 md:min-h-min dark:border-sidebar-border">
-            <AddAddressButton
-                architectId={architect.id}
-                qKey={[endpoint, ...qKey]}
+            <AddSpecifierButton
+                architectId={architectId}
+                endpoint={endpoint}
+                qKey={qKey}
             />
+
             <div className="flex flex-1 flex-col gap-4 p-2">
                 <div className="flex flex-col gap-1">
                     <h2 className="font-medium">Specifiers</h2>
