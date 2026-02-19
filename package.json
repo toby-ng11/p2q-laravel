@@ -82,5 +82,9 @@
         "@tailwindcss/oxide-win32-x64-msvc": "^4.0.1",
         "lightningcss-linux-x64-gnu": "^1.31.1",
         "lightningcss-win32-x64-msvc": "^1.31.1"
+    },
+    "overrides": {
+        "ajv": "^8.18.0",
+        "minimatch": "^10.2.1"
     }
 }
