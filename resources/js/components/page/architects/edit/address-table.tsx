@@ -45,7 +45,7 @@ export function AddressTable({ architectId }: { architectId: number }) {
             {
                 accessorKey: 'name',
                 header: ({ column }) => (
-                    <DataTableColumnHeader column={column} title="Name" />
+                    <DataTableColumnHeader column={column} title="Nickname" />
                 ),
                 cell: ({ row }) => (
                     <div className="max-w-75 truncate font-medium">

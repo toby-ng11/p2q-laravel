@@ -31,6 +31,12 @@ function getMainNavItems(isAdmin: boolean): NavItem[] {
             icon: Home,
         },
         {
+            title: 'Architects',
+            href: architect(),
+            icon: LayoutGrid,
+            openDialog: 'createArchitect',
+        },
+        {
             title: 'Opportunities',
             href: opportunity(),
             icon: LayoutGrid,
@@ -44,12 +50,6 @@ function getMainNavItems(isAdmin: boolean): NavItem[] {
             title: 'Quotes',
             href: quote(),
             icon: LayoutGrid,
-        },
-        {
-            title: 'Architects',
-            href: architect(),
-            icon: LayoutGrid,
-            openDialog: 'createArchitect',
         },
     ];
 
