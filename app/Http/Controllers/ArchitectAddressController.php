@@ -52,14 +52,13 @@ class ArchitectAddressController extends Controller implements HasMiddleware
     public function store(StoreAddressRequest $request, Architect $architect): RedirectResponse
     {
         $validated = $request->validated();
-        $result = $this->addressService->storeArchitectAddress($architect, $validated);
+        $result = $this->addressService->storeAddress($architect, $validated);
 
         if ($result) {
             Inertia::flash('success', 'Address created successfully.');
             return back();
         } else {
-            Inertia::flash('error', 'Could not save address. Please try again.');
-            return back();
+            return back()->withErrors('Could not save address. Please try again.');
         }
     }
 
@@ -69,14 +68,13 @@ class ArchitectAddressController extends Controller implements HasMiddleware
     public function update(UpdateAddressRequest $request, Architect $architect, Address $address): RedirectResponse
     {
         $validated = $request->validated();
-        $result = $this->addressService->updateArchitectAddress($architect, $address, $validated);
+        $result = $this->addressService->updateAddress($architect, $address, $validated);
 
         if ($result) {
             Inertia::flash('success', 'Address updated successfully.');
             return back();
         } else {
-            Inertia::flash('error', 'Could not update address. Please try again.');
-            return back();
+            return back()->withErrors('Could not update address. Please try again.');
         }
     }
 
@@ -92,8 +90,7 @@ class ArchitectAddressController extends Controller implements HasMiddleware
             Inertia::flash('success', 'Address deleted!');
             return back();
         } else {
-            Inertia::flash('error', 'Could not delete address. Please try again.');
-            return back();
+            return back()->withErrors('Could not delete address. Please try again.');
         }
     }
 }

@@ -59,8 +59,7 @@ class ArchitectSpecifierController extends Controller implements HasMiddleware
             Inertia::flash('success', 'Specifier created!');
             return back();
         } else {
-            Inertia::flash('error', 'Creation failed. Please try again later or contact an admin.');
-            return back();
+            return back()->withErrors('Creation failed. Please try again later or contact an admin.');
         }
     }
 
@@ -92,8 +91,7 @@ class ArchitectSpecifierController extends Controller implements HasMiddleware
             Inertia::flash('success', 'Specifier updated!');
             return back();
         } else {
-            Inertia::flash('error', 'Update failed. Please try again later or contact an admin.');
-            return back();
+            return back()->withErrors('Update failed. Please try again later or contact an admin.');
         }
     }
 
@@ -109,8 +107,7 @@ class ArchitectSpecifierController extends Controller implements HasMiddleware
             Inertia::flash('success', 'Specifier deleted!');
             return back();
         } else {
-            Inertia::flash('error', 'Delete failed. Please try again later or contact an admin.');
-            return back();
+            return back()->withErrors('Delete failed. Please try again later or contact an admin.');
         }
     }
 }

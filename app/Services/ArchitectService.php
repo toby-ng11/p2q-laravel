@@ -11,34 +11,32 @@ use Illuminate\Support\Facades\Log;
 
 class ArchitectService
 {
-    public function storeArchitect(array $data): Architect|false
+    public function storeArchitect(array $data): Architect
     {
         try {
-            $architect = Architect::create($data);
-            return $architect;
+            return Architect::create($data);
         } catch (Exception $e) {
-            Log::error("Architect creation failed: " . $e->getMessage());
-            return false;
+            Log::error("Architect creation failed", ['error' => $e->getMessage(), 'data' => $data]);
+            throw $e;
         }
     }
 
     public function updateArchitect(Architect $architect, array $data): bool
     {
         try {
-            $architect->update($data);
-            return true;
+            return $architect->update($data);
         } catch (Exception $e) {
-            Log::error("Architect update failed for architect {$architect->id}." . $e->getMessage());
+            Log::error("Architect update failed #{$architect->id}", ['error' => $e->getMessage()]);
             return false;
         }
     }
 
-    public function deleteArchitect(Architect $architect): bool {
+    public function deleteArchitect(Architect $architect): bool
+    {
         try {
-            $architect->delete();
-            return true;
+            return (bool) $architect->delete();
         } catch (Exception $e) {
-            Log::error("Architect deletion failed for architect {$architect->id}." . $e->getMessage());
+            Log::error("Architect deletion failed #{$architect->id}", ['error' => $e->getMessage()]);
             return false;
         }
     }

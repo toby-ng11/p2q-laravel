@@ -49,54 +49,12 @@ class ArchitectPolicyTest extends TestCase
         );
     }
 
-    public function test_archrep_can_update_own_architect_except_architect_rep(): void
-    {
-        $rep1 = $this->user(UserRole::ARCHREP);
-        $rep2 = $this->user(UserRole::ARCHREP);
-        $architect = Architect::factory()->create([
-            'architect_rep_id' => $rep1->id,
-            'architect_name' => 'Original Name',
-        ]);
-
-        $response = $this->actingAs($rep1)->put(
-            route('architects.update', $architect),
-            [
-                'architect_name' => 'Updated Name',
-                'architect_rep_id' => $rep2->id, // illegal change
-                'architect_type_id' => ArchitectType::inRandomOrder()->first()->id,
-            ]
-        );
-
-        $response->assertSessionHasNoErrors();
-
-        $response->assertRedirect();
-
-        $this->assertDatabaseHas('architects', [
-            'id' => $architect->id,
-            'architect_name' => 'Updated Name',
-            'architect_rep_id' => $rep1->id, // unchanged
-        ]);
-
-        $this->assertDatabaseMissing('architects', [
-            'id' => $architect->id,
-            'architect_rep_id' => $rep2->id, // should NOT be updated
-        ]);
-
-        $this->actingAs($rep1)
-            ->get(route('architects.edit', $architect))
-            ->assertStatus(200);
-    }
-
     public function test_archrep_cannot_update_others_architect(): void
     {
         $rep = $this->user(UserRole::ARCHREP);
         $other = $this->user(UserRole::ARCHREP);
 
         $architect = Architect::factory()->create(['architect_rep_id' => $other->id]);
-
-        $this->actingAs($rep)
-            ->get(route('architects.edit', $architect))
-            ->assertStatus(403);
 
         $this->assertFalse(
             $this->policy->update($rep, $architect)
@@ -123,10 +81,6 @@ class ArchitectPolicyTest extends TestCase
         $this->assertTrue(
             $this->policy->view($sales, $architect)
         );
-
-        $this->actingAs($sales)
-            ->get(route('architects.edit', $architect))
-            ->assertStatus(200);
     }
 
     public function test_sales_cannot_update_architect(): void
@@ -144,10 +98,6 @@ class ArchitectPolicyTest extends TestCase
         $sales = $this->user(UserRole::SALES);
         $architect = Architect::factory()->create();
 
-        $this->actingAs($sales)
-            ->post('/architects', $architect->toArray())
-            ->assertStatus(403);
-
         $this->assertFalse(
             $this->policy->create($sales)
         );
@@ -157,10 +107,6 @@ class ArchitectPolicyTest extends TestCase
     {
         $manager = $this->user(UserRole::MANAGER);
         $architect = Architect::factory()->create();
-
-        $this->actingAs($manager)
-            ->get(route('architects.edit', $architect))
-            ->assertStatus(200);
 
         $this->assertTrue(
             $this->policy->update($manager, $architect)
@@ -176,20 +122,12 @@ class ArchitectPolicyTest extends TestCase
         $this->assertTrue($this->policy->delete($admin, $architect));
         $this->assertTrue($this->policy->update($admin, $architect));
         $this->assertTrue($this->policy->view($admin, $architect));
-
-        $this->actingAs($admin)
-            ->get(route('architects.edit', $architect))
-            ->assertStatus(200);
     }
 
     public function test_guest_cannot_update_architect()
     {
         $guest = $this->user(UserRole::GUEST);
         $architect = Architect::factory()->create();
-
-        $this->actingAs($guest)
-            ->get(route('architects.edit', $architect))
-            ->assertStatus(403);
 
         $this->assertFalse(
             $this->policy->view($guest, $architect)
@@ -199,11 +137,6 @@ class ArchitectPolicyTest extends TestCase
     public function test_guest_cannot_create_architect()
     {
         $guest = $this->user(UserRole::GUEST);
-        $architect = Architect::factory()->create();
-
-        $this->actingAs($guest)
-            ->post('/architects', $architect->toArray())
-            ->assertStatus(403);
 
         $this->assertFalse(
             $this->policy->create($guest)

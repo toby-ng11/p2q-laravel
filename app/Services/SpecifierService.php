@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Log;
 
 class SpecifierService
 {
+    public function __construct(protected AddressService $addressService) {}
+
     public function storeSpecifier(Architect $architect, array $data): bool
     {
         try {
@@ -21,22 +23,28 @@ class SpecifierService
                     'job_title' => $data['job_title'],
                 ]);
 
-                $fullName = "{$data['first_name']} {$data['last_name']}";
+                $fullName = $data['last_name'] ?
+                    $data['first_name'] . ' ' . $data['last_name'] :
+                    $data['first_name'];
 
-                $specifier->address()->create([
-                    'phys_address1' => 'TBD', // required for address
+                $addressData = [
+                    'phys_address1' => $data['physical_address1'] ?? 'TBD', // required for address
                     'name' => $fullName,
                     'central_phone_number' => $data['central_phone_number'],
                     'email_address' => $data['email_address'],
-                ]);
+                ];
+
+                $specifier->address()->create($addressData);
             });
 
             return true;
         } catch (Exception $e) {
-            Log::error("Failed to create specifier for architect {$architect->id}: " . $e->getMessage());
+            Log::error("Failed to create specifier for architect {$architect->id}", [
+                'error' => $e->getMessage()
+            ]);
 
             return false;
-        }
+        };
     }
 
     public function updateSpecifierAndAddress(Specifier $specifier, array $data): bool
@@ -49,13 +57,12 @@ class SpecifierService
                     'job_title' => $data['job_title'],
                 ]);
 
-                $fullName = "{$data['first_name']} {$data['last_name']}";
+                $fullName = $data['last_name'] ?
+                    $data['first_name'] . ' ' . $data['last_name'] :
+                    $data['first_name'];
 
                 $specifier->address()->updateOrCreate(
-                    [
-                        'addressable_id' => $specifier->id,
-                        'addressable_type' => get_class($specifier)
-                    ],
+                    [],
                     [
                         'phys_address1' => 'TBD',  // required for address
                         'name' => $fullName,
@@ -64,22 +71,20 @@ class SpecifierService
                     ]
                 );
             });
-
             return true;
         } catch (Exception $e) {
-            Log::error("Failed to update specifier ID {$specifier->id}: " . $e->getMessage());
+            Log::error("Failed to update specifier ID {$specifier->id}", ['error' => $e->getMessage()]);
 
             return false;
-        }
+        };
     }
 
     public function deleteSpecifier(Specifier $specifier): bool
     {
         try {
-            $specifier->delete();
-            return true;
+            return (bool) $specifier->delete();
         } catch (Exception $e) {
-            Log::error("Failed to delete specifier ID {$specifier->id}: " . $e->getMessage());
+            Log::error("Failed to delete specifier ID {$specifier->id}:", ['error' => $e->getMessage()]);
             return false;
         }
     }

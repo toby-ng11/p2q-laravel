@@ -3,43 +3,39 @@
 namespace App\Services;
 
 use App\Models\Address;
-use App\Models\Architect;
 use Exception;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
-use Inertia\Inertia;
 
 class AddressService
 {
-    public function storeArchitectAddress(Architect $architect, array $data): bool
+    public function storeAddress(Model $model, array $data): bool
     {
         try {
-            $architect->addresses()->create($data);
+            $model->addresses()->create($data);
             return true;
         } catch (Exception $e) {
-            Log::error("Address creation failed for Architect {$architect->id}: " . $e->getMessage());
+            Log::error("Address creation failed for " . get_class($model) . " ID: {$model->id}. " . $e->getMessage());
             return false;
         }
     }
 
-    public function updateArchitectAddress(Architect $architect, Address $address, array $data): bool
+    public function updateAddress(Model $model, Address $address, array $data): bool
     {
         try {
-            $address->update($data);
-            return true;
+            return $address->update($data);
         } catch (Exception $e) {
-            Log::error("Address update failed for Architect {$architect->id}: " . $e->getMessage());
+            Log::error("Address update failed for " . get_class($model) . " ID: {$model->id}. " . $e->getMessage());
             return false;
         }
     }
 
-    public function deleteAddress(Architect $architect, Address $address): bool
+    public function deleteAddress(Model $model, Address $address): bool
     {
         try {
-            $address->delete();
-            return true;
+            return (bool) $address->delete();
         } catch (Exception $e) {
-            Log::error("Address deletion failed for Architect {$architect->id}: " . $e->getMessage());
+            Log::error("Address deletion failed for" . get_class($model) . " ID: {$model->id}. " . $e->getMessage());
             return false;
         }
     }

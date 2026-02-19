@@ -7,7 +7,6 @@ use App\Http\Requests\StoreArchitectRequest;
 use App\Http\Requests\UpdateArchitectRequest;
 use App\Models\Architect;
 use App\Services\ArchitectService;
-use Exception;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,7 +14,6 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -62,10 +60,6 @@ class ArchitectController extends Controller implements HasMiddleware
         $validated = $request->validated();
         $result = $this->architectService->storeArchitect($validated);
 
-        if (! $result) {
-            return back()->withErrors('Architect creation failed. Please try again later or contact admin to resolve the problem.');
-        }
-
         Inertia::flash('success', 'Architect created successfully.');
 
         return to_route('architects.edit', $result);
@@ -106,12 +100,9 @@ class ArchitectController extends Controller implements HasMiddleware
 
         if ($result) {
             Inertia::flash('success', 'Architect saved!');
-
             return back();
         } else {
-            Inertia::flash('error', 'Something went wrong, please try again.');
-
-            return back();
+            return back()->withErrors("Couldn't update architect, please try again.");
         }
     }
 
@@ -127,8 +118,7 @@ class ArchitectController extends Controller implements HasMiddleware
             Inertia::flash('success', 'Architect deleted!');
             return back();
         } else {
-            Inertia::flash('error', 'Deletion failed.');
-            return back();
+            return back()->withErrors("Couldn't delete architect, please try again.");
         }
     }
 }

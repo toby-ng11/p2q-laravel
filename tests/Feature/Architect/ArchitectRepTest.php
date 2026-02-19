@@ -3,6 +3,8 @@
 namespace Tests\Feature\Architect;
 
 use App\Enums\UserRole;
+use App\Models\Architect;
+use App\Models\ArchitectType;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -55,6 +57,43 @@ class ArchitectRepTest extends TestCase
             ->assertOk()
             ->assertJsonFragment(['id' => $rep->id])
             ->assertJsonMissing(['id' => $otherRep->id]);
+    }
+
+    public function test_archrep_can_update_own_architect_except_architect_rep(): void
+    {
+        $rep1 = $this->makeUserWithRole(UserRole::ARCHREP);
+        $rep2 = $this->makeUserWithRole(UserRole::ARCHREP);
+        $architect = Architect::factory()->create([
+            'architect_rep_id' => $rep1->id,
+            'architect_name' => 'Original Name',
+        ]);
+
+        $this->actingAs($rep1)
+            ->put(
+                route('architects.update', $architect),
+                [
+                    'architect_name' => 'Updated Name',
+                    'architect_rep_id' => $rep2->id, // illegal change
+                    'architect_type_id' => ArchitectType::inRandomOrder()->first()->id,
+                ]
+            )
+            ->assertValid()
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('architects', [
+            'id' => $architect->id,
+            'architect_name' => 'Updated Name',
+            'architect_rep_id' => $rep1->id, // unchanged
+        ]);
+
+        $this->assertDatabaseMissing('architects', [
+            'id' => $architect->id,
+            'architect_rep_id' => $rep2->id, // should NOT be updated
+        ]);
+
+        $this->actingAs($rep1)
+            ->get(route('architects.edit', $architect))
+            ->assertStatus(200);
     }
 
     public function test_sales_cannot_access_architect_reps(): void

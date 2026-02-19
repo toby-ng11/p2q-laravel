@@ -13,7 +13,10 @@ class ArchitectTypeController extends Controller
      */
     public function index(): ResourceCollection
     {
-        return ArchitectType::query()->orderBy('architect_type_desc')->get()->toResourceCollection();
+        return ArchitectType::query()
+            ->orderBy('architect_type_desc')
+            ->get()
+            ->toResourceCollection();
     }
 
     /**
