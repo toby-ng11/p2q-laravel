@@ -1,0 +1,22 @@
+name: gitleaks
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2.3.9

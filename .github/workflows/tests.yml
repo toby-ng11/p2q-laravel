@@ -48,6 +48,3 @@ jobs:
 
       - name: Tests
         run: ./vendor/bin/phpunit
-
-      - name: Gitleaks
-        uses: gitleaks/gitleaks-action@v2.3.9
