@@ -25,6 +25,7 @@ import AppLogo from './app-logo';
 
 function getMainNavItems(isAdmin: boolean): NavItem[] {
     const mainNavItems: NavItem[] = [
+        ...(isAdmin ? [{ title: 'Admin', href: admin(), icon: Shield }] : []),
         {
             title: 'Home',
             href: home(),
@@ -52,10 +53,6 @@ function getMainNavItems(isAdmin: boolean): NavItem[] {
             icon: LayoutGrid,
         },
     ];
-
-    if (isAdmin) {
-        mainNavItems.unshift({ title: 'Admin', href: admin(), icon: Shield });
-    }
 
     return [...mainNavItems];
 }

@@ -67,6 +67,43 @@ export default function WelcomePage() {
     const { user, userProperties } = usePage<SharedData>().props.auth;
     const isAdmin = userProperties.isAdministrator;
 
+    const cards = [
+        ...(isAdmin
+            ? [
+                  {
+                      href: admin(),
+                      title: 'Admin',
+                      description:
+                          'Gain full control over user roles, permissions, and platform settings through the Admin Portal.',
+                  },
+              ]
+            : []),
+        {
+            href: architect(),
+            title: 'Architects',
+            description:
+                'Connect and collaborate with architects seamlessly to ensure design accuracy and quality.',
+        },
+        {
+            href: opportunity(),
+            title: 'Opportunities',
+            description:
+                'Create and edit the opportunities, which can be converted to projects later.',
+        },
+        {
+            href: project(),
+            title: 'Projects',
+            description:
+                'Streamline your project workflows, track progress, and stay organized with our intuitive tools.',
+        },
+        {
+            href: quote(),
+            title: 'Approval',
+            description:
+                'Easily manage approvals and ensure every step is properly authorized and documented.',
+        },
+    ];
+
     return (
         <>
             <Head title="Welcome" />
@@ -107,42 +144,9 @@ export default function WelcomePage() {
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-6 px-4 py-6">
-                {isAdmin && (
-                    <FeatureCard
-                        index={0}
-                        href={admin()}
-                        title="Admin"
-                        description="Gain full control over user roles, permissions, and platform settings through the Admin Portal."
-                    />
-                )}
-
-                <FeatureCard
-                    index={1}
-                    href={opportunity()}
-                    title="Opportunities"
-                    description="Create and edit the opportunities, which can be converted to projects later."
-                />
-
-                <FeatureCard
-                    index={2}
-                    href={project()}
-                    title="Projects"
-                    description="Streamline your project workflows, track progress, and stay organized with our intuitive tools."
-                />
-
-                <FeatureCard
-                    index={3}
-                    href={quote()}
-                    title="Approval"
-                    description="Easily manage approvals and ensure every step is properly authorized and documented."
-                />
-
-                <FeatureCard
-                    index={4}
-                    href={architect()}
-                    title="Architects"
-                    description="Connect and collaborate with architects seamlessly to ensure design accuracy and quality."
-                />
+                {cards.map((card, index) => (
+                    <FeatureCard key={card.title} index={index} {...card} />
+                ))}
             </div>
         </>
     );
