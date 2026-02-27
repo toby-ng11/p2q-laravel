@@ -4,6 +4,7 @@ namespace Tests\Feature\Requests;
 
 use App\Enums\UserRole;
 use App\Models\Architect;
+use App\Models\ArchitectType;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -25,8 +26,8 @@ class StoreArchitectRequestTest extends TestCase
         return array_merge([
             'architect_name'    => fake()->company(),
             'architect_rep_id'  => null,
-            'architect_type_id' => 1,
-            'class_id'          => 'A',
+            'architect_type_id' => ArchitectType::inRandomOrder()->first()->id,
+            'class_id'          => fake()->randomElement(['A', 'B', 'C', 'D', 'E']),
         ], $overrides);
     }
 
