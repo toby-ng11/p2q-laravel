@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Contracts\StorableAddress;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  * @property-read \App\Models\Address $address
  * @property-read \App\Models\Architect $architect
  */
-class Specifier extends Model
+class Specifier extends Model implements StorableAddress
 {
     /** @use HasFactory<\Database\Factories\SpecifierFactory> */
     use HasFactory;
@@ -48,6 +49,13 @@ class Specifier extends Model
             // This ensures addresses are deleted when the architect is
             $specifier->address()->delete();
         });
+    }
+
+    #[\Override]
+    public function storeAddress(array $data): bool
+    {
+        $this->address()->create($data);
+        return true;
     }
 
     public function address(): MorphOne

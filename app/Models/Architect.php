@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Contracts\StorableAddress;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property-read \App\Models\ArchitectType $architectType
  * @property-read \App\Models\User $architectRep
  */
-class Architect extends Model
+class Architect extends Model implements StorableAddress
 {
     /** @use HasFactory<\Database\Factories\ArchitectFactory> */
     use HasFactory;
@@ -56,6 +57,13 @@ class Architect extends Model
                 $specifier->delete();
             });
         });
+    }
+
+    #[\Override]
+    public function storeAddress(array $data): bool
+    {
+        $this->addresses()->create($data);
+        return true;
     }
 
     public function addresses(): MorphMany
