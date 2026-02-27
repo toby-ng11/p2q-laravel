@@ -34,7 +34,7 @@ class SpecifierService
                     'email_address' => $data['email_address'],
                 ];
 
-                $specifier->address()->create($addressData);
+                $this->addressService->storeAddress($specifier, $addressData);
             });
 
             return true;
@@ -61,15 +61,14 @@ class SpecifierService
                     $data['first_name'] . ' ' . $data['last_name'] :
                     $data['first_name'];
 
-                $specifier->address()->updateOrCreate(
-                    [],
-                    [
-                        'phys_address1' => 'TBD',  // required for address
-                        'name' => $fullName,
-                        'central_phone_number' => $data['central_phone_number'],
-                        'email_address' => $data['email_address'],
-                    ]
-                );
+                $addressData = [
+                    'phys_address1' => 'TBD',  // required for address
+                    'name' => $fullName,
+                    'central_phone_number' => $data['central_phone_number'],
+                    'email_address' => $data['email_address'],
+                ];
+
+                $this->addressService->updateAddress($specifier, $specifier->address, $addressData);
             });
             return true;
         } catch (Exception $e) {

@@ -12,10 +12,13 @@ class AddressService
     public function storeAddress(Model $model, array $data): bool
     {
         try {
-            $model->addresses()->create($data);
+            $model->storeAddress($data);
             return true;
         } catch (Exception $e) {
-            Log::error("Address creation failed for " . get_class($model) . " ID: {$model->id}. " . $e->getMessage());
+            Log::error(
+                "Address creation failed for " . get_class($model) . " ID: {$model->id}.",
+                ['error' => $e->getMessage(), 'data' => $data]
+            );
             return false;
         }
     }
@@ -25,7 +28,10 @@ class AddressService
         try {
             return $address->update($data);
         } catch (Exception $e) {
-            Log::error("Address update failed for " . get_class($model) . " ID: {$model->id}. " . $e->getMessage());
+            Log::error(
+                "Address update failed for " . get_class($model) . " ID: {$model->id}, address ID: {$address->id}.",
+                ['error' => $e->getMessage(), 'data' => $data]
+            );
             return false;
         }
     }
@@ -35,7 +41,10 @@ class AddressService
         try {
             return (bool) $address->delete();
         } catch (Exception $e) {
-            Log::error("Address deletion failed for" . get_class($model) . " ID: {$model->id}. " . $e->getMessage());
+            Log::error(
+                "Address update failed for " . get_class($model) . " ID: {$model->id}, address ID: {$address->id}.",
+                ['error' => $e->getMessage()]
+            );
             return false;
         }
     }
