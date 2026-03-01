@@ -17,10 +17,6 @@ enum ProjectStatus: int
 
     case DRAFT = 11;
 
-    case IN_REVIEW = 12;
-    case REJECTED = 13;
-    case APPROVED = 14;
-
     public function label(): string
     {
         if ($this === self::PRE_DESIGN) {
