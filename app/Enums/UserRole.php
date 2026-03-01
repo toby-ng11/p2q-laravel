@@ -12,13 +12,7 @@ enum UserRole: int
 
     public function label(): string
     {
-        return match ($this) {
-            self::GUEST => 'Guest',
-            self::SALES => 'Sales',
-            self::ARCHREP => 'Architect Representative',
-            self::MANAGER => 'Manager',
-            self::ADMIN => 'Admin',
-        };
+        return ucfirst(strtolower(str_replace('_', ' ', $this->name)));
     }
 
     public function level(): int
