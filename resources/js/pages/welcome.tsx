@@ -134,7 +134,7 @@ export default function WelcomePage() {
             </div>
 
             <div className="mx-4 mt-2 rounded-md bg-linear-to-r from-sky-500 to-blue-500 pt-20 pr-8 pb-20 pl-8 text-center text-white md:mx-20">
-                <h1 className="mb-2 text-4xl">
+                <h1 className="mb-2 font-serif text-4xl">
                     Welcome to Project to Quote Portal
                 </h1>
                 <p className="mx-auto">

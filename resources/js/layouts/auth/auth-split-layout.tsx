@@ -30,7 +30,7 @@ export default function AuthSplitLayout({
                 {quote && (
                     <div className="relative z-20 mt-auto">
                         <blockquote className="space-y-2">
-                            <p className="text-lg">
+                            <p className="font-serif text-2xl">
                                 &ldquo;{quote.message}&rdquo;
                             </p>
                             <footer className="text-sm text-neutral-300">
