@@ -19,9 +19,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
                     });
                 });
 
+                Route::get('/architect', 'architect')->name('architect');
+                Route::prefix('/architect')->group(function () {
+                    Route::get('/total', 'totalArchitects');
+                });
+
                 Route::get('/opportunity', 'opportunity')->name('opportunity');
                 Route::get('/project', 'project')->name('project');
-                Route::get('/architect', 'architect')->name('architect');
                 Route::get('/quote', 'quote')->name('quote');
             });
         });

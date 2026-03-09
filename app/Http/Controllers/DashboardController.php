@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\ArchitectService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class DashboardController extends Controller
 {
+    public function __construct(protected ArchitectService $architectService) {}
+
     public function home(): Response
     {
         return Inertia::render('dashboard/home');
@@ -18,6 +22,16 @@ class DashboardController extends Controller
         return Inertia::render('dashboard/admin');
     }
 
+    public function architect(): Response
+    {
+        return Inertia::render('dashboard/architect');
+    }
+
+    public function totalArchitects(): JsonResponse
+    {
+        return response()->json($this->architectService->architectGrowthCalculation());
+    }
+
     public function opportunity(): Response
     {
         return Inertia::render('dashboard/opportunity');
@@ -26,11 +40,6 @@ class DashboardController extends Controller
     public function project(): Response
     {
         return Inertia::render('dashboard/project');
-    }
-
-    public function architect(): Response
-    {
-        return Inertia::render('dashboard/architect');
     }
 
     public function quote(): Response

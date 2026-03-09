@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Http\Resources\ArchitectResource;
 use App\Models\Architect;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Log;
@@ -59,5 +60,34 @@ class ArchitectService
         }
 
         return ArchitectResource::collection(['User is not logged in.']);
+    }
+
+    public function architectGrowthCalculation(): array
+    {
+        $lastMonth = Carbon::now()->subMonth()->month;
+        $thisMonth = Carbon::now()->month;
+
+        $lastMonthCount = Architect::query()->whereMonth('created_at', $lastMonth)->count();
+        $thisMonthCount = Architect::query()->whereMonth('created_at', $thisMonth)->count();
+        $totalArchitect = Architect::count();
+
+        $growthPercentage = $lastMonthCount > 0 ?
+            round(($thisMonthCount - $lastMonthCount) * 100 / $lastMonthCount, 1):
+            null;
+
+        $statement = match (true) {
+            $growthPercentage > 10 => 'Strong growth this month',
+            $growthPercentage > 0  => 'Trending up this month',
+            $growthPercentage < 0  => 'Down this month',
+            $growthPercentage === null && $thisMonthCount > 0 => 'Not enough data for trending',
+            default                => 'No growth this month',
+        };
+
+        return [
+            'total_architect' => $totalArchitect,
+            'new_architect_this_month' => $thisMonthCount,
+            'growth_percentage' => $growthPercentage,
+            'statement' => $statement,
+        ];
     }
 }

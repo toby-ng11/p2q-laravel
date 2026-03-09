@@ -1,5 +1,5 @@
 import ArchitectTable from '@/components/dashboards/architect/architect-table';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
+import { OwnArchitectStats } from '@/components/dashboards/architect/own-architect-stats';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
 import architects from '@/routes/architects';
@@ -28,21 +28,6 @@ export default function ArchitectDashboard() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Architect Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="grid auto-rows-min gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                </div>
-
                 {isManagerOrAbove ? (
                     <Tabs defaultValue="own-architect">
                         <TabsList>
@@ -55,14 +40,17 @@ export default function ArchitectDashboard() {
                         </TabsList>
 
                         <TabsContent value="own-architect">
-                            <ArchitectTable
-                                endpoint={architects.index(options).url}
-                                tableInfo={{
-                                    title: 'Own Architects',
-                                    description:
-                                        'Here is the list of your architects.',
-                                }}
-                            />
+                            <div className="flex flex-col gap-4">
+                                <OwnArchitectStats />
+                                <ArchitectTable
+                                    endpoint={architects.index(options).url}
+                                    tableInfo={{
+                                        title: 'Own Architects',
+                                        description:
+                                            'Here is the list of your architects.',
+                                    }}
+                                />
+                            </div>
                         </TabsContent>
                         <TabsContent value="all-architect">
                             <ArchitectTable

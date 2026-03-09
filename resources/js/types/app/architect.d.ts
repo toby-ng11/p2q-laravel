@@ -15,3 +15,10 @@ export interface Architect {
     architect_rep_id: number;
     class_id: string;
 }
+
+export interface ArchitectGrowth {
+    total_architect: number;
+    new_architect_this_month: number;
+    growth_percentage: number | null;
+    statement: string;
+}
