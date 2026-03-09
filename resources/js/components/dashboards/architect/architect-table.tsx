@@ -1,3 +1,4 @@
+import { CardBorder } from '@/components/card-border';
 import { DataTable } from '@/components/data-table';
 import { DataTableColumnHeader } from '@/components/table-header';
 import { DataTableRefreshButton } from '@/components/table-refresh-button';
@@ -165,7 +166,7 @@ export default function ArchitectTable({
     );
 
     return (
-        <div className="relative h-full flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 p-4 md:min-h-min dark:border-sidebar-border">
+        <CardBorder>
             <DataTableRefreshButton
                 onRefresh={() => refetch({ cancelRefetch: true })}
                 isFetching={isFetching}
@@ -208,6 +209,6 @@ export default function ArchitectTable({
                     isFetching={isFetching}
                 />
             </div>
-        </div>
+        </CardBorder>
     );
 }

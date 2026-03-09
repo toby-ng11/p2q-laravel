@@ -27,20 +27,17 @@ export default function ArchitectEdit() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Edit Architect" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-                    <div className="relative overflow-hidden rounded-xl border p-4">
-                        <ArchitectEditForm
-                            key={architect.id}
-                            architect={architect}
-                        />
-                    </div>
-                    <div className="relative overflow-hidden rounded-xl border lg:col-span-2"></div>
-                </div>
-
                 <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-                    <AddressTable architectId={architect.id} />
+                    <ArchitectEditForm
+                        key={architect.id}
+                        architect={architect}
+                    />
+
                     <SpecifierTable architectId={architect.id} />
                 </div>
+
+                <AddressTable architectId={architect.id} />
+                <div className="relative overflow-hidden rounded-xl border lg:col-span-2"></div>
             </div>
         </AppLayout>
     );

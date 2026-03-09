@@ -1,3 +1,4 @@
+import { CardBorder } from '@/components/card-border';
 import InputError from '@/components/input-error';
 import { InputLoading } from '@/components/input-loading';
 import { Button } from '@/components/ui/button';
@@ -48,171 +49,182 @@ export function ArchitectEditForm({ architect }: { architect: Architect }) {
         architectTypeData.isLoading || ownArchitectRepData.isLoading;
 
     return (
-        <Form {...update.form(architect.id)} options={{ preserveScroll: true }}>
-            {({ processing, errors }) => (
-                <FieldGroup>
-                    <FieldSet>
-                        <FieldLegend>Details</FieldLegend>
-                        <FieldDescription>
-                            Edit the Architect details, then click Save.
-                        </FieldDescription>
-                        <FieldGroup>
-                            <Field>
-                                <FieldLabel htmlFor="architect_name">
-                                    Architect name
-                                </FieldLabel>
-                                <Input
-                                    id="architect_name"
-                                    name="architect_name"
-                                    defaultValue={architect.architect_name}
-                                />
-                                <InputError message={errors.architect_name} />
-                            </Field>
+        <CardBorder>
+            <Form
+                {...update.form(architect.id)}
+                options={{ preserveScroll: true }}
+            >
+                {({ processing, errors }) => (
+                    <FieldGroup>
+                        <FieldSet>
+                            <FieldLegend>Details</FieldLegend>
+                            <FieldDescription>
+                                Edit the Architect details, then click Save.
+                            </FieldDescription>
+                            <FieldGroup>
+                                <Field>
+                                    <FieldLabel htmlFor="architect_name">
+                                        Architect name
+                                    </FieldLabel>
+                                    <Input
+                                        id="architect_name"
+                                        name="architect_name"
+                                        defaultValue={architect.architect_name}
+                                    />
+                                    <InputError
+                                        message={errors.architect_name}
+                                    />
+                                </Field>
 
-                            <Field>
-                                <FieldLabel htmlFor="architect_type_id">
-                                    Type
-                                </FieldLabel>
-                                {architectTypeData.isLoading ? (
-                                    <InputLoading />
-                                ) : (
-                                    <>
-                                        <Select
-                                            name="architect_type_id"
-                                            defaultValue={architect.architect_type_id.toString()}
-                                        >
-                                            <SelectTrigger id="architect_type_id">
-                                                <SelectValue placeholder="Select an architect type..." />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {architectTypeData.data?.map(
-                                                    (type) => (
-                                                        <SelectItem
-                                                            key={
-                                                                type.architect_type_desc
-                                                            }
-                                                            value={type.id.toString()}
-                                                        >
-                                                            {
-                                                                type.architect_type_desc
-                                                            }
-                                                        </SelectItem>
-                                                    ),
-                                                )}
-                                            </SelectContent>
-                                        </Select>
-                                        <InputError
-                                            message={errors.architect_type_id}
-                                        />
-                                    </>
-                                )}
-                            </Field>
-
-                            <Field>
-                                <FieldLabel htmlFor="architect_rep_id">
-                                    Architect representative
-                                </FieldLabel>
-                                {isManagerOrAbove ? (
-                                    <>
-                                        {architectRepData.isLoading ? (
-                                            <InputLoading />
-                                        ) : (
-                                            <>
-                                                <Select
-                                                    name="architect_rep_id"
-                                                    defaultValue={architect.architect_rep_id.toString()}
-                                                >
-                                                    <SelectTrigger id="architect_rep_id">
-                                                        <SelectValue placeholder="Select an architect representative..." />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {architectRepData.data?.map(
-                                                            (type) => (
-                                                                <SelectItem
-                                                                    key={
-                                                                        type.id
-                                                                    }
-                                                                    value={type.id.toString()}
-                                                                >
-                                                                    {type.name}
-                                                                </SelectItem>
-                                                            ),
-                                                        )}
-                                                    </SelectContent>
-                                                </Select>
-                                                <InputError
-                                                    message={
-                                                        errors.architect_rep_id
-                                                    }
-                                                />
-                                            </>
-                                        )}
-                                    </>
-                                ) : (
-                                    <>
-                                        {ownArchitectRepData.isLoading ? (
-                                            <InputLoading />
-                                        ) : (
-                                            <Input
-                                                id="architect_rep_id"
-                                                type="text"
-                                                value={
-                                                    ownArchitectRepData.data
-                                                        ?.name
+                                <Field>
+                                    <FieldLabel htmlFor="architect_type_id">
+                                        Type
+                                    </FieldLabel>
+                                    {architectTypeData.isLoading ? (
+                                        <InputLoading />
+                                    ) : (
+                                        <>
+                                            <Select
+                                                name="architect_type_id"
+                                                defaultValue={architect.architect_type_id.toString()}
+                                            >
+                                                <SelectTrigger id="architect_type_id">
+                                                    <SelectValue placeholder="Select an architect type..." />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {architectTypeData.data?.map(
+                                                        (type) => (
+                                                            <SelectItem
+                                                                key={
+                                                                    type.architect_type_desc
+                                                                }
+                                                                value={type.id.toString()}
+                                                            >
+                                                                {
+                                                                    type.architect_type_desc
+                                                                }
+                                                            </SelectItem>
+                                                        ),
+                                                    )}
+                                                </SelectContent>
+                                            </Select>
+                                            <InputError
+                                                message={
+                                                    errors.architect_type_id
                                                 }
-                                                disabled
                                             />
-                                        )}
-                                    </>
-                                )}
-                            </Field>
+                                        </>
+                                    )}
+                                </Field>
 
-                            <Field>
-                                <FieldLabel htmlFor="class_id">
-                                    Class
-                                </FieldLabel>
-                                <Select
-                                    name="class_id"
-                                    defaultValue={architect.class_id}
-                                >
-                                    <SelectTrigger id="class_id">
-                                        <SelectValue placeholder="Select an architect class..." />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {architectClasses.map(
-                                            (architectClass) => (
-                                                <SelectItem
-                                                    key={architectClass}
-                                                    value={architectClass}
-                                                >
-                                                    {architectClass}
-                                                </SelectItem>
-                                            ),
-                                        )}
-                                    </SelectContent>
-                                </Select>
-                                <InputError message={errors.class_id} />
-                            </Field>
-                        </FieldGroup>
-                    </FieldSet>
-                    <Field
-                        orientation="horizontal"
-                        className="flex justify-end"
-                    >
-                        <Button
-                            type="submit"
-                            disabled={
-                                isManagerOrAbove
-                                    ? processing || isLoadingForManager
-                                    : processing || isLoadingForArchitectRep
-                            }
+                                <Field>
+                                    <FieldLabel htmlFor="architect_rep_id">
+                                        Architect representative
+                                    </FieldLabel>
+                                    {isManagerOrAbove ? (
+                                        <>
+                                            {architectRepData.isLoading ? (
+                                                <InputLoading />
+                                            ) : (
+                                                <>
+                                                    <Select
+                                                        name="architect_rep_id"
+                                                        defaultValue={architect.architect_rep_id.toString()}
+                                                    >
+                                                        <SelectTrigger id="architect_rep_id">
+                                                            <SelectValue placeholder="Select an architect representative..." />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {architectRepData.data?.map(
+                                                                (type) => (
+                                                                    <SelectItem
+                                                                        key={
+                                                                            type.id
+                                                                        }
+                                                                        value={type.id.toString()}
+                                                                    >
+                                                                        {
+                                                                            type.name
+                                                                        }
+                                                                    </SelectItem>
+                                                                ),
+                                                            )}
+                                                        </SelectContent>
+                                                    </Select>
+                                                    <InputError
+                                                        message={
+                                                            errors.architect_rep_id
+                                                        }
+                                                    />
+                                                </>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <>
+                                            {ownArchitectRepData.isLoading ? (
+                                                <InputLoading />
+                                            ) : (
+                                                <Input
+                                                    id="architect_rep_id"
+                                                    type="text"
+                                                    value={
+                                                        ownArchitectRepData.data
+                                                            ?.name
+                                                    }
+                                                    disabled
+                                                />
+                                            )}
+                                        </>
+                                    )}
+                                </Field>
+
+                                <Field>
+                                    <FieldLabel htmlFor="class_id">
+                                        Class
+                                    </FieldLabel>
+                                    <Select
+                                        name="class_id"
+                                        defaultValue={architect.class_id}
+                                    >
+                                        <SelectTrigger id="class_id">
+                                            <SelectValue placeholder="Select an architect class..." />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {architectClasses.map(
+                                                (architectClass) => (
+                                                    <SelectItem
+                                                        key={architectClass}
+                                                        value={architectClass}
+                                                    >
+                                                        {architectClass}
+                                                    </SelectItem>
+                                                ),
+                                            )}
+                                        </SelectContent>
+                                    </Select>
+                                    <InputError message={errors.class_id} />
+                                </Field>
+                            </FieldGroup>
+                        </FieldSet>
+                        <Field
+                            orientation="horizontal"
+                            className="flex justify-end"
                         >
-                            Submit
-                            {processing && <Spinner />}
-                        </Button>
-                    </Field>
-                </FieldGroup>
-            )}
-        </Form>
+                            <Button
+                                type="submit"
+                                disabled={
+                                    isManagerOrAbove
+                                        ? processing || isLoadingForManager
+                                        : processing || isLoadingForArchitectRep
+                                }
+                            >
+                                Submit
+                                {processing && <Spinner />}
+                            </Button>
+                        </Field>
+                    </FieldGroup>
+                )}
+            </Form>
+        </CardBorder>
     );
 }
