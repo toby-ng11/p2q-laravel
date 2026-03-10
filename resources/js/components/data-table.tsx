@@ -412,7 +412,11 @@ export function DataTable<TData, TValue>({
                                     data-state={
                                         row.getIsSelected() && 'selected'
                                     }
-                                    onClick={() => onRowClick?.(row)}
+                                    onClick={(e) => {
+                                        const target = e.target as HTMLElement;
+                                        if (target.closest('a, button')) return;
+                                        onRowClick?.(row);
+                                    }}
                                     className={
                                         onRowClick ? 'cursor-pointer' : ''
                                     }
