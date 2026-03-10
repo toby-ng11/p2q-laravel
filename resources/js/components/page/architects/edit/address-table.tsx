@@ -6,10 +6,10 @@ import { DataTableColumnHeader } from '@/components/table-header';
 import { useTanStackQuery } from '@/hooks/use-tanstack-query';
 import { index } from '@/routes/architects/addresses';
 import { ColumnDef } from '@tanstack/react-table';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { AddAddressButton } from './add-address-button';
 import { AddressDeleteButton } from './address-delete-button';
-import { AddressEditButton } from './address-edit-button';
+import { AddressEditDialog } from './address-edit-button';
 
 export function AddressTable({ architectId }: { architectId: number }) {
     const qKey = useMemo(
@@ -22,6 +22,10 @@ export function AddressTable({ architectId }: { architectId: number }) {
         qKey,
     );
 
+    const [selectedAddress, setSelectedAddress] = useState<Address | null>(
+        null,
+    );
+
     const columns = useMemo<ColumnDef<Address>[]>(
         () => [
             {
@@ -32,12 +36,9 @@ export function AddressTable({ architectId }: { architectId: number }) {
                 cell: ({ row }) => {
                     const data = row.original;
                     return (
-                        <AddressEditButton
-                            architectId={architectId}
-                            endpoint={endpoint}
-                            qKey={qKey}
-                            data={data}
-                        />
+                        <div className="text-blue-500 dark:text-blue-300">
+                            {data.id}
+                        </div>
                     );
                 },
                 enableHiding: false,
@@ -163,7 +164,21 @@ export function AddressTable({ architectId }: { architectId: number }) {
                     sortingColumns={[{ id: 'id', desc: true }]}
                     isFetching={isFetching}
                     tableSkeleton={tableSkeletonProps}
+                    onRowClick={(row) => setSelectedAddress(row.original)}
                 />
+
+                {selectedAddress && (
+                    <AddressEditDialog
+                        architectId={architectId}
+                        data={selectedAddress}
+                        endpoint={endpoint}
+                        qKey={qKey}
+                        open={!!selectedAddress}
+                        onOpenChange={(open) => {
+                            if (!open) setSelectedAddress(null);
+                        }}
+                    />
+                )}
             </div>
         </CardBorder>
     );

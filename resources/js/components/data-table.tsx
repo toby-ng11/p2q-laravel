@@ -33,6 +33,7 @@ import {
     getPaginationRowModel,
     getSortedRowModel,
     PaginationState,
+    Row,
     SortingState,
     useReactTable,
     VisibilityState,
@@ -70,6 +71,7 @@ interface DataTableProps<TData, TValue> {
     hasFacetedFilter?: { facetedFilters?: FacetedFilterConfig[] };
     hasSelect?: boolean;
     isFetching?: boolean;
+    onRowClick?: (row: Row<TData>) => void;
     tableSkeleton?: { rows: number; columns: number };
 }
 
@@ -84,6 +86,7 @@ export function DataTable<TData, TValue>({
     hasFacetedFilter = { facetedFilters: [] },
     hasSelect = false,
     isFetching = false,
+    onRowClick,
     tableSkeleton = { rows: 10, columns: 5 },
 }: DataTableProps<TData, TValue>) {
     const PaginationRowSelectedNumber = () => (
@@ -408,6 +411,10 @@ export function DataTable<TData, TValue>({
                                     key={row.id}
                                     data-state={
                                         row.getIsSelected() && 'selected'
+                                    }
+                                    onClick={() => onRowClick?.(row)}
+                                    className={
+                                        onRowClick ? 'cursor-pointer' : ''
                                     }
                                 >
                                     {row.getVisibleCells().map((cell) => (

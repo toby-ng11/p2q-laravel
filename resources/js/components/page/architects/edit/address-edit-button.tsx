@@ -8,7 +8,6 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -23,7 +22,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { update } from '@/routes/architects/addresses';
 import { Form } from '@inertiajs/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import countryList from 'react-select-country-list';
 import { AddressDeleteButton } from './address-delete-button';
 
@@ -32,33 +31,28 @@ interface AddressEditButtonProps {
     data: Address;
     endpoint: string;
     qKey: (string | number)[];
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
 }
 
-export function AddressEditButton({
+export function AddressEditDialog({
     architectId,
     data,
     endpoint,
     qKey,
+    open,
+    onOpenChange,
 }: AddressEditButtonProps) {
     const queryClient = useQueryClient();
     const countries = useMemo(() => countryList().getData(), []);
-    const [open, setOpen] = useState(false);
 
     const handleSuccess = () => {
         queryClient.invalidateQueries({ queryKey: [endpoint, ...qKey] });
-        setOpen(false);
+        onOpenChange(false);
     };
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <Button
-                    variant="ghost"
-                    className="text-blue-500 dark:text-blue-300"
-                >
-                    {data.id}
-                </Button>
-            </DialogTrigger>
+        <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="md:min-w-2xl">
                 <Form
                     {...update.form({
