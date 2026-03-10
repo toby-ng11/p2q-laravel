@@ -5,10 +5,10 @@ import { DataTableColumnHeader } from '@/components/table-header';
 import { useTanStackQuery } from '@/hooks/use-tanstack-query';
 import { index } from '@/routes/architects/specifiers';
 import { ColumnDef } from '@tanstack/react-table';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { AddSpecifierButton } from './add-specifier-button';
 import { SpecifierDeleteButton } from './specifier-delete-button';
-import { SpecifierEditButton } from './specifier-edit-button';
+import { SpecifierEditDialog } from './specifier-edit-dialog';
 
 export function SpecifierTable({ architectId }: { architectId: number }) {
     const qKey = useMemo(
@@ -20,6 +20,9 @@ export function SpecifierTable({ architectId }: { architectId: number }) {
         Specifier[]
     >(endpoint, qKey);
 
+    const [selectedSpecifier, setSelectedSpecifier] =
+        useState<Specifier | null>(null);
+
     const columns = useMemo<ColumnDef<Specifier>[]>(
         () => [
             {
@@ -30,12 +33,9 @@ export function SpecifierTable({ architectId }: { architectId: number }) {
                 cell: ({ row }) => {
                     const data = row.original;
                     return (
-                        <SpecifierEditButton
-                            data={data}
-                            architectId={architectId}
-                            endpoint={endpoint}
-                            qKey={qKey}
-                        />
+                        <div className="text-blue-500 dark:text-blue-300">
+                            {data.id}
+                        </div>
                     );
                 },
                 enableHiding: false,
@@ -156,7 +156,21 @@ export function SpecifierTable({ architectId }: { architectId: number }) {
                     sortingColumns={[{ id: 'id', desc: true }]}
                     isFetching={isFetching}
                     tableSkeleton={tableSkeletonProps}
+                    onRowClick={(row) => setSelectedSpecifier(row.original)}
                 />
+
+                {selectedSpecifier && (
+                    <SpecifierEditDialog
+                        architectId={architectId}
+                        data={selectedSpecifier}
+                        endpoint={endpoint}
+                        qKey={qKey}
+                        open={!!selectedSpecifier}
+                        onOpenChange={(open) => {
+                            if (!open) setSelectedSpecifier(null);
+                        }}
+                    />
+                )}
             </div>
         </CardBorder>
     );

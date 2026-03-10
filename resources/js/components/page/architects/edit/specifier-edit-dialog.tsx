@@ -16,7 +16,6 @@ import { Spinner } from '@/components/ui/spinner';
 import { update } from '@/routes/architects/specifiers';
 import { Form } from '@inertiajs/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
 import { SpecifierDeleteButton } from './specifier-delete-button';
 
 interface SpecifierEditButtonProps {
@@ -24,24 +23,27 @@ interface SpecifierEditButtonProps {
     architectId: number;
     endpoint: string;
     qKey: (string | number)[];
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
 }
 
-export function SpecifierEditButton({
+export function SpecifierEditDialog({
     data,
     architectId,
     endpoint,
     qKey,
+    open,
+    onOpenChange,
 }: SpecifierEditButtonProps) {
     const queryClient = useQueryClient();
-    const [open, setOpen] = useState(false);
 
     const handleSuccess = () => {
         queryClient.invalidateQueries({ queryKey: [endpoint, ...qKey] });
-        setOpen(false);
+        onOpenChange(false);
     };
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogTrigger asChild>
                 <Button
                     variant="ghost"

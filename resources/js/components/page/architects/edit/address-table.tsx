@@ -9,7 +9,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 import { AddAddressButton } from './add-address-button';
 import { AddressDeleteButton } from './address-delete-button';
-import { AddressEditDialog } from './address-edit-button';
+import { AddressEditDialog } from './address-edit-dialog';
 
 export function AddressTable({ architectId }: { architectId: number }) {
     const qKey = useMemo(
