@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Policy;
+namespace Tests\Feature\Architect\Policy;
 
 use App\Enums\UserRole;
 use App\Models\Architect;
