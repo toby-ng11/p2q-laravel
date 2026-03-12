@@ -62,17 +62,23 @@ class ArchitectService
         return ArchitectResource::collection(['User is not logged in.']);
     }
 
-    public function architectGrowthCalculation(): array
+    public function architectGrowthCalculation(?int $userId = null): array
     {
         $lastMonth = Carbon::now()->subMonth()->month;
         $thisMonth = Carbon::now()->month;
 
-        $lastMonthCount = Architect::query()->whereMonth('created_at', $lastMonth)->count();
-        $thisMonthCount = Architect::query()->whereMonth('created_at', $thisMonth)->count();
-        $totalArchitect = Architect::count();
+        if ($userId !== null) {
+            $lastMonthCount = Architect::query()->whereArchitectRepId($userId)->whereMonth('created_at', $lastMonth)->count();
+            $thisMonthCount = Architect::query()->whereArchitectRepId($userId)->whereMonth('created_at', $thisMonth)->count();
+            $totalArchitect = Architect::whereArchitectRepId($userId)->count();
+        } else {
+            $lastMonthCount = Architect::query()->whereMonth('created_at', $lastMonth)->count();
+            $thisMonthCount = Architect::query()->whereMonth('created_at', $thisMonth)->count();
+            $totalArchitect = Architect::count();
+        }
 
         $growthPercentage = $lastMonthCount > 0 ?
-            round(($thisMonthCount - $lastMonthCount) * 100 / $lastMonthCount, 1):
+            round(($thisMonthCount - $lastMonthCount) * 100 / $lastMonthCount, 1) :
             null;
 
         $statement = match (true) {

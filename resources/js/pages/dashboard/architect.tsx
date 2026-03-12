@@ -1,5 +1,5 @@
+import { ArchitectStats } from '@/components/dashboards/architect/architect-stats';
 import ArchitectTable from '@/components/dashboards/architect/architect-table';
-import { OwnArchitectStats } from '@/components/dashboards/architect/own-architect-stats';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
 import architects from '@/routes/architects';
@@ -41,7 +41,7 @@ export default function ArchitectDashboard() {
 
                         <TabsContent value="own-architect">
                             <div className="flex flex-col gap-4">
-                                <OwnArchitectStats />
+                                <ArchitectStats userId={userId} />
                                 <ArchitectTable
                                     endpoint={architects.index(options).url}
                                     tableInfo={{
@@ -53,14 +53,17 @@ export default function ArchitectDashboard() {
                             </div>
                         </TabsContent>
                         <TabsContent value="all-architect">
-                            <ArchitectTable
-                                endpoint={architects.index().url}
-                                tableInfo={{
-                                    title: 'All Architects',
-                                    description:
-                                        'Here is the list of all architects.',
-                                }}
-                            />
+                            <div className="flex flex-col gap-4">
+                                <ArchitectStats />
+                                <ArchitectTable
+                                    endpoint={architects.index().url}
+                                    tableInfo={{
+                                        title: 'All Architects',
+                                        description:
+                                            'Here is the list of all architects.',
+                                    }}
+                                />
+                            </div>
                         </TabsContent>
                     </Tabs>
                 ) : (

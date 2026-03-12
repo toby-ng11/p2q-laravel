@@ -23,6 +23,13 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property-read int|null $specifiers_count
  * @property-read \App\Models\ArchitectType $architectType
  * @property-read \App\Models\User $architectRep
+ * @method static \Illuminate\Database\Eloquent\Builder<Architect>|Architect whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<Architect>|Architect whereArchitectName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<Architect>|Architect whereArchitectRepId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<Architect>|Architect whereArchitectTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<Architect>|Architect whereClassId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<Architect>|Architect whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<Architect>|Architect whereUpdatedAt($value)
  */
 class Architect extends Model implements StorableAddress
 {

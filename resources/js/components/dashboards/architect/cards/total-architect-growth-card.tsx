@@ -10,13 +10,19 @@ import {
 import { useTotalArchitectGrowth } from '@/hooks/queries/useArchitectQueries';
 import { IconTrendingDown, IconTrendingUp } from '@tabler/icons-react';
 
-export function TotalArchitectGrowthCard() {
+interface TotalArchitectGrowthCardProps {
+    userId?: number;
+}
+
+export function TotalArchitectGrowthCard({
+    userId,
+}: TotalArchitectGrowthCardProps) {
     const {
         total_architect,
         new_architect_this_month,
         growth_percentage,
         statement,
-    } = useTotalArchitectGrowth().data ?? {};
+    } = useTotalArchitectGrowth(userId).data ?? {};
 
     const isPositive = (growth_percentage ?? 0) >= 0;
     const TrendIcon = isPositive ? IconTrendingUp : IconTrendingDown;
@@ -44,7 +50,7 @@ export function TotalArchitectGrowthCard() {
                         <TrendIcon className="size-4" />
                     )}
                 </div>
-                {new_architect_this_month && (
+                {new_architect_this_month !== undefined && (
                     <div className="text-muted-foreground">
                         {new_architect_this_month} new architect this month
                     </div>

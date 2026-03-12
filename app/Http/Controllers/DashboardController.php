@@ -27,9 +27,20 @@ class DashboardController extends Controller
         return Inertia::render('dashboard/architect');
     }
 
-    public function totalArchitects(): JsonResponse
+    public function totalArchitects(Request $request): JsonResponse
     {
-        return response()->json($this->architectService->architectGrowthCalculation());
+        $user = $request->user();
+        $userId = $request->input('user_id', null);
+
+        if ($user) {
+            if ($userId === null && $user->isManagerOrAbove()) {
+                return response()->json($this->architectService->architectGrowthCalculation());
+            } else {
+                return response()->json($this->architectService->architectGrowthCalculation($userId));
+            }
+        }
+
+        return response()->json('Something wrong in the backend.');
     }
 
     public function opportunity(): Response

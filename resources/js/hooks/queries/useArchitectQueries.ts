@@ -22,9 +22,13 @@ const useArchitectReps = () => {
     ]);
 };
 
-const useTotalArchitectGrowth = () => {
-    return useTanStackQuery<ArchitectGrowth>(totalArchitects.get().url, [
+const useTotalArchitectGrowth = (userId: number | undefined) => {
+    const options = userId ? { query: { user_id: userId } } : undefined;
+    const url = totalArchitects.get(options).url;
+
+    return useTanStackQuery<ArchitectGrowth>(url, [
         'total-architect-growth',
+        userId,
     ]);
 };
 
