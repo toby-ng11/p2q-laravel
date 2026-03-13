@@ -90,7 +90,12 @@ class ArchitectPolicy
      */
     public function restore(User $user, Architect $architect): bool
     {
-        return false;
+        if ($user->isManagerOrAbove()) {
+            return true;
+        }
+
+        return $user->user_role_id === UserRole::ARCHREP &&
+            $this->isOwner($user, $architect);
     }
 
     /**
@@ -98,6 +103,11 @@ class ArchitectPolicy
      */
     public function forceDelete(User $user, Architect $architect): bool
     {
-        return false;
+        if ($user->isManagerOrAbove()) {
+            return true;
+        }
+
+        return $user->user_role_id === UserRole::ARCHREP &&
+            $this->isOwner($user, $architect);
     }
 }

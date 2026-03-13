@@ -8,12 +8,12 @@ use App\Models\ArchitectType;
 use App\Models\User;
 use App\Policies\ArchitectPolicy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Mockery;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
 class ArchitectPolicyTest extends TestCase
 {
-    use RefreshDatabase;
-
     private ArchitectPolicy $policy;
 
     protected function setUp(): void
@@ -22,124 +22,181 @@ class ArchitectPolicyTest extends TestCase
         $this->policy = new ArchitectPolicy();
     }
 
-    private function user(UserRole $role): User
+    protected function tearDown(): void
     {
-        return User::factory()->create(['user_role_id' => $role]);
+        Mockery::close();
+        parent::tearDown();
+    }
+
+    private function makeUser(UserRole $role): User
+    {
+        $user = Mockery::mock(User::class);
+        $user->makePartial();
+        $user->id = 1;
+        $user->user_role_id = $role;
+        $user->shouldReceive('isAdministrator')->andReturn($role === UserRole::ADMIN);
+        $user->shouldReceive('isManagerOrAbove')->andReturn($role->atLeast(UserRole::MANAGER));
+        return $user;
+    }
+
+    private function makeArchitect(int $archRepId): Architect
+    {
+        $architect = Mockery::mock(Architect::class);
+        $architect->makePartial();
+        $architect->architect_rep_id = $archRepId;
+        return $architect;
+    }
+
+    public function test_before_returns_true_for_admin(): void
+    {
+        $admin = $this->makeUser(UserRole::ADMIN);
+
+        $this->assertTrue($this->policy->before($admin, 'view'));
+        $this->assertTrue($this->policy->before($admin, 'delete'));
+    }
+
+    public function test_before_returns_null_for_non_admin(): void
+    {
+        $user = $this->makeUser(UserRole::ARCHREP);
+
+        $this->assertNull($this->policy->before($user, 'view'));
+    }
+
+    public function test_manager_can_view_any_architect(): void
+    {
+        $manager = $this->makeUser(UserRole::MANAGER);
+        $opportunity = $this->makeArchitect(archRepId: 99);
+
+        $this->assertTrue($this->policy->view($manager, $opportunity));
+    }
+
+    public function test_sales_can_view_any_oarchitect(): void
+    {
+        $sales = $this->makeUser(UserRole::SALES);
+        $opportunity = $this->makeArchitect(archRepId: 99);
+
+        $this->assertTrue($this->policy->view($sales, $opportunity));
     }
 
     public function test_archrep_can_view_own_architect(): void
     {
-        $rep = $this->user(UserRole::ARCHREP);
-        $architect = Architect::factory()->create(['architect_rep_id' => $rep->id]);
+        $user = $this->makeUser(UserRole::ARCHREP);
+        $opportunity = $this->makeArchitect(archRepId: $user->id);
 
-        $this->assertTrue(
-            $this->policy->view($rep, $architect)
-        );
+        $this->assertTrue($this->policy->view($user, $opportunity));
     }
 
-    public function test_archrep_can_update_own_architect(): void
+    public function test_archrep_cannot_view_other_architect(): void
     {
-        $rep = $this->user(UserRole::ARCHREP);
-        $architect = Architect::factory()->create([
-            'architect_rep_id' => $rep->id,
-        ]);
+        $user = $this->makeUser(UserRole::ARCHREP);
+        $opportunity = $this->makeArchitect(archRepId: 99);
 
-        $this->assertTrue(
-            $this->policy->update($rep, $architect)
-        );
+        $this->assertFalse($this->policy->view($user, $opportunity));
     }
 
-    public function test_archrep_cannot_update_others_architect(): void
+    public function test_guest_cannot_view_architect(): void
     {
-        $rep = $this->user(UserRole::ARCHREP);
-        $other = $this->user(UserRole::ARCHREP);
+        $guest = $this->makeUser(UserRole::GUEST);
+        $opportunity = $this->makeArchitect(archRepId: 99);
 
-        $architect = Architect::factory()->create(['architect_rep_id' => $other->id]);
-
-        $this->assertFalse(
-            $this->policy->update($rep, $architect)
-        );
+        $this->assertFalse($this->policy->view($guest, $opportunity));
     }
 
-    public function test_archrep_cannot_view_others_architect(): void
+    public function test_manager_can_view_any(): void
     {
-        $rep = $this->user(UserRole::ARCHREP);
-        $other = $this->user(UserRole::ARCHREP);
-
-        $architect = Architect::factory()->create(['architect_rep_id' => $other->id]);
-
-        $this->assertFalse(
-            $this->policy->view($rep, $architect)
-        );
+        $this->assertTrue($this->policy->viewAny($this->makeUser(UserRole::MANAGER)));
     }
 
-    public function test_sales_can_view_any_architect(): void
+    public function test_sales_can_view_any(): void
     {
-        $sales = $this->user(UserRole::SALES);
-        $architect = Architect::factory()->create();
-
-        $this->assertTrue(
-            $this->policy->view($sales, $architect)
-        );
+        $this->assertTrue($this->policy->viewAny($this->makeUser(UserRole::SALES)));
     }
 
-    public function test_sales_cannot_update_architect(): void
+    public function test_archrep_cannot_view_any(): void
     {
-        $sales = $this->user(UserRole::SALES);
-        $architect = Architect::factory()->create();
-
-        $this->assertFalse(
-            $this->policy->update($sales, $architect)
-        );
+        $this->assertFalse($this->policy->viewAny($this->makeUser(UserRole::ARCHREP)));
     }
 
-    public function test_sales_cannot_create_architect()
+    #[DataProvider('writeAbilityProvider')]
+    public function test_manager_can_always_write(string $ability): void
     {
-        $sales = $this->user(UserRole::SALES);
-        $architect = Architect::factory()->create();
+        $manager = $this->makeUser(UserRole::MANAGER);
+        $opportunity = $this->makeArchitect(archRepId: 99);
 
-        $this->assertFalse(
-            $this->policy->create($sales)
-        );
+        $this->assertTrue($this->policy->$ability($manager, $opportunity));
     }
 
-    public function test_manager_can_update_any_architect(): void
+    #[DataProvider('writeAbilityProvider')]
+    public function test_archrep_owner_can_write(string $ability): void
     {
-        $manager = $this->user(UserRole::MANAGER);
-        $architect = Architect::factory()->create();
+        $user = $this->makeUser(UserRole::ARCHREP);
+        $opportunity = $this->makeArchitect(archRepId: $user->id);
 
-        $this->assertTrue(
-            $this->policy->update($manager, $architect)
-        );
+        $this->assertTrue($this->policy->$ability($user, $opportunity));
     }
 
-    public function test_admin_can_do_anything(): void
+    #[DataProvider('writeAbilityProvider')]
+    public function test_archrep_unrelated_cannot_write(string $ability): void
     {
-        $admin = $this->user(UserRole::ADMIN);
-        $architect = Architect::factory()->create();
+        $user = $this->makeUser(UserRole::ARCHREP);
+        $opportunity = $this->makeArchitect(archRepId: 99);
 
-        $this->assertTrue($this->policy->create($admin));
-        $this->assertTrue($this->policy->delete($admin, $architect));
-        $this->assertTrue($this->policy->update($admin, $architect));
-        $this->assertTrue($this->policy->view($admin, $architect));
+        $this->assertFalse($this->policy->$ability($user, $opportunity));
     }
 
-    public function test_guest_cannot_update_architect()
+    #[DataProvider('writeAbilityProvider')]
+    public function test_sales_cannot_write(string $ability): void
     {
-        $guest = $this->user(UserRole::GUEST);
-        $architect = Architect::factory()->create();
+        $sales = $this->makeUser(UserRole::SALES);
+        $opportunity = $this->makeArchitect(archRepId: 99);
 
-        $this->assertFalse(
-            $this->policy->view($guest, $architect)
-        );
+        $this->assertFalse($this->policy->$ability($sales, $opportunity));
     }
 
-    public function test_guest_cannot_create_architect()
+    #[DataProvider('writeAbilityProvider')]
+    public function test_guest_cannot_write(string $ability): void
     {
-        $guest = $this->user(UserRole::GUEST);
+        $guest = $this->makeUser(UserRole::GUEST);
+        $opportunity = $this->makeArchitect(archRepId: 99);
 
-        $this->assertFalse(
-            $this->policy->create($guest)
-        );
+        $this->assertFalse($this->policy->$ability($guest, $opportunity));
+    }
+
+    public static function writeAbilityProvider(): array
+    {
+        return [
+            'update'      => ['update'],
+            'delete'      => ['delete'],
+            'restore'     => ['restore'],
+            'forceDelete' => ['forceDelete'],
+        ];
+    }
+
+    public function test_manager_can_create(): void
+    {
+        $manager = $this->makeUser(UserRole::MANAGER);
+
+        $this->assertTrue($this->policy->create($manager));
+    }
+
+    public function test_archrep_can_create(): void
+    {
+        $user = $this->makeUser(UserRole::ARCHREP);
+
+        $this->assertTrue($this->policy->create($user));
+    }
+
+    public function test_sales_cannot_create(): void
+    {
+        $user = $this->makeUser(UserRole::SALES);
+
+        $this->assertFalse($this->policy->create($user));
+    }
+
+    public function test_guest_cannot_create(): void
+    {
+        $guest = $this->makeUser(UserRole::GUEST);
+
+        $this->assertFalse($this->policy->create($guest));
     }
 }
