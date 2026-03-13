@@ -31,7 +31,7 @@ class ArchitectPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->user_role_id->atLeast(UserRole::SALES);
+        return $user->isManagerOrAbove() || $user->user_role_id === UserRole::SALES;
     }
 
     /**

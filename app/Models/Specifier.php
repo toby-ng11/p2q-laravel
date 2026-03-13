@@ -18,6 +18,13 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  * @property int $id
  * @property-read \App\Models\Address $address
  * @property-read \App\Models\Architect $architect
+ * @method static \Illuminate\Database\Eloquent\Builder<Specifier>|Specifier whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<Specifier>|Specifier whereFirstName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<Specifier>|Specifier whereLastName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<Specifier>|Specifier whereJobTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<Specifier>|Specifier whereArchitectId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<Specifier>|Specifier whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<Specifier>|Specifier whereUpdatedAt($value)
  */
 class Specifier extends Model implements StorableAddress
 {
